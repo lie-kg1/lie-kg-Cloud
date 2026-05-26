@@ -85,47 +85,47 @@ tools_menu() {
         case $t in
             1)
                 echo -e "\n${YELLOW}⚙ Running Root Access Script...${NC}"
-                bash <(curl -s https://raw.githubusercontent.com/lie-kg/ptero/refs/heads/main/ptero/tools/root.sh)
+                bash <(curl -s https://raw.githubusercontent.com/lie-kg1/ptero/refs/heads/main/ptero/tools/root.sh)
                 pause ;;
 
             2)
                 echo -e "\n${YELLOW}⚙ Running Tailscale Installer...${NC}"
-                bash <(curl -s https://raw.githubusercontent.com/lie-kg/ptero/refs/heads/main/ptero/tools/tailscale.sh)
+                bash <(curl -s https://raw.githubusercontent.com/lie-kg1/ptero/refs/heads/main/ptero/tools/tailscale.sh)
                 pause ;;
 
             3)
                 echo -e "\n${YELLOW}⚙ Running Zerotier Installer...${NC}"
-                bash <(curl -s https://raw.githubusercontent.com/lie-kg/ptero/refs/heads/main/ptero/tools/zerotier.sh)
+                bash <(curl -s https://raw.githubusercontent.com/lie-kg1/ptero/refs/heads/main/ptero/tools/zerotier.sh)
                 pause ;;
 
             4)
                 echo -e "\n${YELLOW}⚙ Running Cloudflare Script...${NC}"
-                bash <(curl -s https://raw.githubusercontent.com/lie-kg/ptero/refs/heads/main/ptero/tools/cloudflare.sh)
+                bash <(curl -s https://raw.githubusercontent.com/lie-kg1/ptero/refs/heads/main/ptero/tools/cloudflare.sh)
                 pause ;;
 
             5)
                 echo -e "\n${YELLOW}⚙ Fetching System Info...${NC}"
-                bash <(curl -s https://raw.githubusercontent.com/lie-kg/ptero/refs/heads/main/ptero/tools/info.sh)
+                bash <(curl -s https://raw.githubusercontent.com/lie-kg1/ptero/refs/heads/main/ptero/tools/info.sh)
                 pause ;;
 
             6)
                 echo -e "\n${YELLOW}⚙ Running Port Forward Tool...${NC}"
-                bash <(curl -s https://raw.githubusercontent.com/lie-kg/ptero/refs/heads/main/ptero/tools/localtonet.sh)
+                bash <(curl -s https://raw.githubusercontent.com/lie-kg1/ptero/refs/heads/main/ptero/tools/localtonet.sh)
                 pause ;;
 
             7)
                 echo -e "\n${YELLOW}⚙ Installing Web Terminal...${NC}"
-                bash <(curl -s https://raw.githubusercontent.com/lie-kg/ptero/refs/heads/main/ptero/tools/terminal.sh)
+                bash <(curl -s https://raw.githubusercontent.com/lie-kg1/ptero/refs/heads/main/ptero/tools/terminal.sh)
                 pause ;;
 
             8)
                 echo -e "\n${YELLOW}⚙ Installing RDP...${NC}"
-                bash <(curl -s https://raw.githubusercontent.com/lie-kg/lie-kg-Hub/refs/heads/main/srv/tools/rdp.sh)
+                bash <(curl -s https://raw.githubusercontent.com/lie-kg1/lie-kg-Hub/refs/heads/main/srv/tools/rdp.sh)
                 pause ;;
 
             9)
                 echo -e "\n${YELLOW}⚙ Installing SSL Panel...${NC}"
-                bash <(curl -s https://raw.githubusercontent.com/lie-kg/hub/refs/heads/main/liekgCloud/toolbox/mengssl.sh)
+                bash <(curl -s https://raw.githubusercontent.com/lie-kg1/hub/refs/heads/main/liekgCloud/toolbox/mengssl.sh)
                 pause ;;
 
             0)
