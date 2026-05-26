@@ -178,9 +178,9 @@ while true; do
     
     case $opt in
         1) ssl_setup ;;
-        2) bash <(curl -fsSL https://raw.githubusercontent.com/lie-kg/lie-kg-Cloud/refs/heads/main/wings/install.sh) ;;
-        3) bash <(curl -fsSL https://raw.githubusercontent.com/lie-kg/lie-kg-Cloud/refs/heads/main/wings/mang.sh) ;;
-        4) bash <(curl -fsSL https://raw.githubusercontent.com/lie-kg/ptero/refs/heads/main/ptero/wings/db.sh) ;;
+        2) bash <(curl -fsSL https://raw.githubusercontent.com/lie-kg1/lie-kg-Cloud/refs/heads/main/wings/install.sh) ;;
+        3) bash <(curl -fsSL https://raw.githubusercontent.com/lie-kg1/lie-kg-Cloud/refs/heads/main/wings/mang.sh) ;;
+        4) bash <(curl -fsSL https://raw.githubusercontent.com/lie-kg1/ptero/refs/heads/main/ptero/wings/db.sh) ;;
         5) uninstall_menu ;;
         0) 
            echo -e "\n${G}👋 Goodbye!${N}"
