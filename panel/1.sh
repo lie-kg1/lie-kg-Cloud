@@ -54,7 +54,7 @@ panel_menu() {
 
         case $p in
             1)  echo -e "  ${CYAN}➜ Executing Pterodactyl Routine...${NC}"
-                bash <(curl -s https://raw.githubusercontent.com/lie-kg/lie-kg-Cloud/refs/heads/main/panel/pterodactyl/run.sh) 
+                bash <(curl -s https://raw.githubusercontent.com/lie-kg1/lie-kg-Cloud/refs/heads/main/panel/pterodactyl/run.sh) 
                 pause ;;
             2)  echo -e "  ${CYAN}➜ Executing [] Routine...${NC}"
                 bash <(curl -s ) 
@@ -69,16 +69,16 @@ panel_menu() {
                 bash <(curl -s ) 
                 pause ;;
             6)  echo -e "  ${CYAN}➜ Executing paymenter Routine...${NC}"
-                bash <(curl -s https://raw.githubusercontent.com/lie-kg/lie-kg-Cloud/refs/heads/main/panel/paymenter/run.sh) 
+                bash <(curl -s https://raw.githubusercontent.com/lie-kg1/lie-kg-Cloud/refs/heads/main/panel/paymenter/run.sh) 
                 pause ;;
             7)  echo -e "  ${CYAN}➜ Executing Convoy Routine...${NC}"
-                bash <(curl -s https://raw.githubusercontent.com/lie-kg/hub/refs/heads/main/liekghub/panel/convoy/run.sh) 
+                bash <(curl -s https://raw.githubusercontent.com/lie-kg1/hub/refs/heads/main/liekghub/panel/convoy/run.sh) 
                 pause ;;
             8)  echo -e "  ${CYAN}➜ Executing [] Routine...${NC}"
                 bash <(curl -s ) 
                 pause ;;
             9)  echo -e "  ${CYAN}➜ Executing [] Routine...${NC}"
-                bash <(curl -s https://raw.githubusercontent.com/lie-kg/lie-kg-Cloud/refs/heads/main/panel/mythical/run.sh) 
+                bash <(curl -s https://raw.githubusercontent.com/lie-kg1/lie-kg-Cloud/refs/heads/main/panel/mythical/run.sh) 
                 pause ;;
             10) echo -e "  ${CYAN}➜ Executing Tools Routine...${NC}"
                 bash <(curl -s ) 
