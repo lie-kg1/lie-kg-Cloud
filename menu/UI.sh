@@ -1,8 +1,8 @@
 #!/bin/bash
-# ===========================================================
-# CODING HUB - OBSIDIAN NEXT GEN (v12.0 - Nobita Edition)
+# ===============================================================
+# CODING HUB lie-kg - OBSIDIAN NEXT GEN (v12.0 - lie_kg Edition)
 # Style: Modern Glass / Segmented Neo UI / Full Redesign
-# ===========================================================
+# ===============================================================
 
 # --- COLORS (Premium Palette) ---
 B_BLUE='\033[1;38;5;33m'
@@ -73,13 +73,13 @@ while true; do
     read -r opt
 
     case $opt in
-        1) bash <(curl -s https://raw.githubusercontent.com/lie-kg/hub/refs/heads/main/liekgCloud/VM/menu.sh) ;;
-        2) bash <(curl -s https://raw.githubusercontent.com/lie-kg/lie-kg-Cloud/refs/heads/main/panel/1.sh) ;;
-        3) bash <(curl -s https://raw.githubusercontent.com/lie-kg/lie-kg-Cloud/refs/heads/main/wings/run.sh) ;;
-        4) bash <(curl -s https://raw.githubusercontent.com/lie-kg/ptero/refs/heads/main/ptero/tools/run.sh) ;;
-        5) bash <(curl -s https://raw.githubusercontent.com/lie-kg/lie-kg-Cloud/refs/heads/main/theme/run.sh) ;;
-        6) bash <(curl -s https://raw.githubusercontent.com/lie-kg/lie-kg-Hub/refs/heads/main/srv/menu/System1.sh) ;;
-        7) bash <(curl -s https://raw.githubusercontent.com/lie-kg/ptero/refs/heads/main/ptero/no-kvm/run.sh) ;;
+        1) bash <(curl -s https://raw.githubusercontent.com/lie-kg1/hub/refs/heads/main/liekgCloud/VM/menu.sh) ;;
+        2) bash <(curl -s https://raw.githubusercontent.com/lie-kg1/lie-kg-Cloud/refs/heads/main/panel/1.sh) ;;
+        3) bash <(curl -s https://raw.githubusercontent.com/lie-kg1/lie-kg-Cloud/refs/heads/main/wings/run.sh) ;;
+        4) bash <(curl -s https://raw.githubusercontent.com/lie-kg1/ptero/refs/heads/main/ptero/tools/run.sh) ;;
+        5) bash <(curl -s https://raw.githubusercontent.com/lie-kg1/lie-kg-Cloud/refs/heads/main/theme/run.sh) ;;
+        6) bash <(curl -s https://raw.githubusercontent.com/lie-kg1/lie-kg-Hub/refs/heads/main/srv/menu/System1.sh) ;;
+        7) bash <(curl -s https://raw.githubusercontent.com/lie-kg1/ptero/refs/heads/main/ptero/no-kvm/run.sh) ;;
 
         # New Options (Ready for you to fill)
         8) 
@@ -89,7 +89,7 @@ while true; do
             ;;
         9) 
             echo -e "\n ${B_PURPLE}▶ Opening Extra Tools...${NC}"
-            bash <(curl -s https://raw.githubusercontent.com/lie-kg/lie-kg-Cloud/refs/heads/main/Extras/run.sh)
+            bash <(curl -s https://raw.githubusercontent.com/lie-kg1/lie-kg-Cloud/refs/heads/main/Extras/run.sh)
             echo -e " ${G}More features coming in future updates.${NC}"
             sleep 1.5
             ;;
