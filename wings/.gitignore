@@ -1,0 +1,19 @@
+# --- Lie-KG Cloud: Shell Script Rules ---
+# Ignore sensitive configuration & credentials
+.netrc
+.env
+*.key
+*.pem
+*.bak
+
+# Ignore local logs and temporary files
+*.log
+/tmp/
+/payload-*/
+
+# Ignore common OS/Shell artifacts
+.DS_Store
+.history
+.bash_history
+*~
+*.swp
