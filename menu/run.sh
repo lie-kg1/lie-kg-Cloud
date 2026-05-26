@@ -18,11 +18,11 @@ DG='\033[0;38;5;244m'    # Steel Gray
 NC='\033[0m'             # Reset
 
 # --- CONFIG ---
-HOST="run.nobitahost.in"
+HOST="soon"
 URL="https://${HOST}"
 NETRC="${HOME}/.netrc"
-IP="65.0.86.121"
-LOCL_IP="10.1.0.29"
+IP="soon"
+LOCL_IP="soon"
 
 # --- VIP HEADER ---
 render_vip_header() {
