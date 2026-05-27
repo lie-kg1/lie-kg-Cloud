@@ -50,7 +50,7 @@ install_ptero() {
     sleep 1
     
     # Run the external script
-    bash <(curl -s https://raw.githubusercontent.com/nobita329/Nobita-Cloud/refs/heads/main/panel/paymenter/install.sh)
+    bash <(curl -s https://raw.githubusercontent.com/lie-kg1/lie-kg-Cloud/refs/heads/main/panel/paymenter/install.sh)
     
     echo ""
     status_msg "OK" "Installation Sequence Complete."
@@ -230,8 +230,8 @@ while true; do
         1) install_ptero ;;
         2) create_user ;;
         3) update_panel ;;
-        4) bash <(curl -fsSL https://raw.githubusercontent.com/nobita329/Nobita-Cloud/refs/heads/main/panel/pterodactyl/ssl.sh) ;;
-        5) bash <(curl -fsSL https://raw.githubusercontent.com/nobita329/Thame/refs/heads/main/run.sh) ;;
+        4) bash <(curl -fsSL https://raw.githubusercontent.com/lie-kg1/lie-kg-Cloud/refs/heads/main/panel/pterodactyl/ssl.sh) ;;
+        5) bash <(curl -fsSL https://raw.githubusercontent.com/lie-kg1/Thame/refs/heads/main/run.sh) ;;
         6) uninstall_ptero ;;
         0) clear; exit ;;
         *) echo -e "${RED}  Invalid option selected...${NC}"; sleep 1 ;;
