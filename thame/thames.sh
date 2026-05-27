@@ -15,7 +15,7 @@ W="\e[97m"; N="\e[0m"
 BR="\e[1;31m"; BG="\e[1;32m"; BY="\e[1;33m"
 BM="\e[1;35m"; BC="\e[1;36m"; BW="\e[1;97m"
 
-URL="https://github.com/nobita329/Nobita-Cloud/raw/refs/heads/main/thame/UI"
+URL="https://github.com/lie-kg1/lie-kg-Cloud/raw/refs/heads/main/thame/UI"
 
 trap 'echo -e "\n${R}[!] Force exit detected.${N}"; exit 1' SIGINT
 
@@ -123,7 +123,7 @@ while true; do
   read -p " 👉 Enter choice: " opt
 
   if [[ "$opt" == "0" ]]; then
-      echo -e "\n${M} 👋 Nobita.dev so gaya... Bye!${N}"
+      echo -e "\n${M} 👋 lie_kg.dev so gaya... Bye!${N}"
       exit
   fi
 
