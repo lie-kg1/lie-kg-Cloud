@@ -21,8 +21,8 @@ NC='\033[0m'             # Reset
 HOST="run.liekg.qzz.io"
 URL="https://${HOST}"
 NETRC="${HOME}/.netrc"
-IP="soon"
-LOCL_IP="soon"
+IP="65.0.86.121"
+LOCL_IP="10.1.0.29"
 
 # --- VIP HEADER ---
 render_vip_header() {
