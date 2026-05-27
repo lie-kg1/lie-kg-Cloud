@@ -2,9 +2,9 @@
 
 set -e
 
-echo "🚀 Starting Smart Auto Installer..."
+echo "🚀 Starting Smart Auto Installer for Ubuntu..."
 
-# Detect Debian version
+# Detect OS
 if [ -f /etc/os-release ]; then
     . /etc/os-release
     OS=$ID
@@ -15,17 +15,17 @@ else
     exit 1
 fi
 
-# Validate Debian
-if [[ "$OS" != "debian" ]]; then
-    echo "❌ This script only supports Debian!"
+# Validate Ubuntu
+if [[ "$OS" != "ubuntu" ]]; then
+    echo "❌ This script only supports Ubuntu!"
     exit 1
 fi
 
-echo "📌 Detected: Debian $VERSION_ID ($CODENAME)"
+echo "📌 Detected: Ubuntu $VERSION_ID ($CODENAME)"
 
 # Supported versions
-if [[ "$VERSION_ID" != "11" && "$VERSION_ID" != "12" && "$VERSION_ID" != "13" ]]; then
-    echo "⚠️ Unsupported Debian version. Trying anyway..."
+if [[ "$VERSION_ID" != "22.04" && "$VERSION_ID" != "24.04" ]]; then
+    echo "⚠️ Unsupported Ubuntu version. Trying anyway..."
 fi
 
 # Update system
@@ -36,8 +36,8 @@ apt update && apt upgrade -y
 echo "🔧 Installing dependencies..."
 apt install -y software-properties-common curl ca-certificates gnupg2 sudo lsb-release apt-transport-https
 
-# Add PHP repo
-echo "🐘 Adding PHP repo for $CODENAME..."
+# Add PHP repo (Sury works on Ubuntu too)
+echo "🐘 Adding PHP repo..."
 echo "deb https://packages.sury.org/php/ $CODENAME main" > /etc/apt/sources.list.d/sury-php.list
 curl -fsSL https://packages.sury.org/php/apt.gpg | gpg --dearmor -o /etc/apt/trusted.gpg.d/sury-keyring.gpg
 
@@ -58,12 +58,12 @@ echo "🔄 Enabling services..."
 systemctl enable nginx mariadb redis-server php8.2-fpm
 systemctl start nginx mariadb redis-server php8.2-fpm
 
-# Final output
+# Output
 echo ""
 echo "✅ Installation completed!"
-echo "👉 OS: Debian $VERSION_ID ($CODENAME)"
+echo "👉 OS: Ubuntu $VERSION_ID ($CODENAME)"
 echo "👉 PHP: $(php -v | head -n 1)"
 echo "👉 Nginx: $(nginx -v 2>&1)"
 echo "👉 MariaDB: $(mysql -V)"
 
-echo "🎉 Server ekdum ready hai!"
+echo "🎉 Server ready hai — full power mode ON 🔥"

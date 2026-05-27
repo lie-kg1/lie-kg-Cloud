@@ -17,15 +17,17 @@ show_banner() {
     clear
     echo -e "${CYAN}"
     cat << "EOF"
-               .                                      .o8                          .               oooo  
-             .o8                                     "888                        .o8               `888  
-oo.ooooo.  .o888oo  .ooooo.  oooo d8b  .ooooo.   .oooo888   .oooo.    .ooooo.  .o888oo oooo    ooo  888  
- 888' `88b   888   d88' `88b `888""8P d88' `88b d88' `888  `P  )88b  d88' `"Y8   888    `88.  .8'   888  
- 888   888   888   888ooo888  888     888   888 888   888   .oP"888  888         888     `88..8'    888  
- 888   888   888 . 888    .o  888     888   888 888   888  d8(  888  888   .o8   888 .    `888'     888  
- 888bod8P'   "888" `Y8bod8P' d888b    `Y8bod8P' `Y8bod88P" `Y888""8o `Y8bod8P'   "888"     .8'     o888o 
- 888                                                                                   .o..P'            
-o888o                                                                                  `Y8P'             
+ooooooooo.                          o8o                          .               oooo  
+`888   `Y88.                        `"'                        .o8               `888  
+ 888   .d88'  .ooooo.  oooo    ooo oooo   .oooo.    .ooooo.  .o888oo oooo    ooo  888  
+ 888ooo88P'  d88' `88b  `88.  .8'  `888  `P  )88b  d88' `"Y8   888    `88.  .8'   888  
+ 888`88b.    888ooo888   `88..8'    888   .oP"888  888         888     `88..8'    888  
+ 888  `88b.  888    .o    `888'     888  d8(  888  888   .o8   888 .    `888'     888  
+o888o  o888o `Y8bod8P'     `8'     o888o `Y888""8o `Y8bod8P'   "888"     .8'     o888o 
+                                                                     .o..P'            
+                                                                     `Y8P'             
+                                                                     
+        reviactyl PANEL INSTALLER         
                                                                                                          
 EOF
     echo -e "           ${WHITE}PREMIUM PTERODACTYL INSTALLER${NC}"
@@ -92,6 +94,11 @@ done
 
 echo -e "${HEADER_LINE}"
 
+line(){ echo -e "${C_GRAY}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${C_RESET}"; }
+step(){ echo -e "${C_BLUE}➜ $1${C_RESET}"; }
+ok(){ echo -e "${C_GREEN}✔ $1${C_RESET}"; }
+warn(){ echo -e "${C_YELLOW}⚠ $1${C_RESET}"; }
+
 # --- Dependencies ---
 apt update && apt install -y curl apt-transport-https ca-certificates gnupg unzip git tar sudo lsb-release
 
@@ -99,48 +106,46 @@ apt update && apt install -y curl apt-transport-https ca-certificates gnupg unzi
 OS=$(lsb_release -is | tr '[:upper:]' '[:lower:]')
 
 if [[ "$OS" == "ubuntu" ]]; then
-    echo "Detected Ubuntu. Adding PPA for PHP..."
+    echo "✅ Detected Ubuntu. Adding PPA for PHP..."
     apt install -y software-properties-common
     LC_ALL=C.UTF-8 add-apt-repository -y ppa:ondrej/php
 elif [[ "$OS" == "debian" ]]; then
-    echo "Detected Debian. Adding SURY PHP repo..."
+    echo "✅ Detected Debian. Skipping PPA and adding PHP repo manually..."
+    # Add SURY PHP repo for Debian
     curl -fsSL https://packages.sury.org/php/apt.gpg | gpg --dearmor -o /usr/share/keyrings/sury-php.gpg
     echo "deb [signed-by=/usr/share/keyrings/sury-php.gpg] https://packages.sury.org/php/ $(lsb_release -cs) main" | tee /etc/apt/sources.list.d/sury-php.list
 fi
 
 # Add Redis GPG key and repo
-rm -f /usr/share/keyrings/redis-archive-keyring.gpg
-curl -fsSL https://packages.redis.io/gpg | gpg --dearmor -o /usr/share/keyrings/redis-archive-keyring.gpg
-echo "deb [signed-by=/usr/share/keyrings/redis-archive-keyring.gpg] https://packages.redis.io/deb $(lsb_release -cs) main" | tee /etc/apt/sources.list.d/redis.list
+curl -fsSL https://packages.redis.io/gpg | sudo gpg --dearmor -o /usr/share/keyrings/redis-archive-keyring.gpg
+echo "deb [signed-by=/usr/share/keyrings/redis-archive-keyring.gpg] https://packages.redis.io/deb $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/redis.list
 
 apt update
 
 # --- Install PHP + extensions ---
-apt install -y php${PHP_VERSION} php${PHP_VERSION}-{cli,fpm,common,mysql,mbstring,bcmath,xml,zip,curl,gd,tokenizer,ctype,simplexml,dom} mariadb-server nginx redis-server
+apt install -y php8.3 php8.3-{cli,fpm,common,mysql,mbstring,bcmath,xml,zip,curl,gd,tokenizer,ctype,simplexml,dom} mariadb-server nginx redis-server
 
 # --- Install Composer ---
-curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+curl -sS https://getcomposer.org/installer | sudo php -- --install-dir=/usr/local/bin --filename=composer
 
 # --- Download Pterodactyl Panel ---
-mkdir -p /var/www/pterodactyl
-cd /var/www/pterodactyl
-curl -Lo panel.tar.gz https://github.com/pterodactyl/panel/releases/latest/download/panel.tar.gz
-tar -xzf panel.tar.gz
+mkdir -p /var/www/reviactyl
+cd /var/www/reviactyl
+curl -Lo panel.tar.gz https://github.com/reviactyl/panel/releases/latest/download/panel.tar.gz
+tar -xzvf panel.tar.gz
 chmod -R 755 storage/* bootstrap/cache/
 
 # --- MariaDB Setup ---
-DB_NAME=panel
-DB_USER=pterodactyl
-DB_PASS=yourPassword
-mariadb -e "CREATE USER '${DB_USER}'@'127.0.0.1' IDENTIFIED BY '${DB_PASS}';" 2>/dev/null || true
-mariadb -e "CREATE DATABASE ${DB_NAME};" 2>/dev/null || true
+DB_NAME=reviactyl
+DB_USER=reviactyl
+DB_PASS=reviactyl
+mariadb -e "CREATE USER '${DB_USER}'@'127.0.0.1' IDENTIFIED BY '${DB_PASS}';"
+mariadb -e "CREATE DATABASE ${DB_NAME};"
 mariadb -e "GRANT ALL PRIVILEGES ON ${DB_NAME}.* TO '${DB_USER}'@'127.0.0.1' WITH GRANT OPTION;"
 mariadb -e "FLUSH PRIVILEGES;"
 
 # --- .env Setup ---
-if [ ! -f ".env.example" ]; then
-    curl -Lo .env.example https://raw.githubusercontent.com/pterodactyl/panel/develop/.env.example
-fi
+
 cp .env.example .env
 sed -i "s|APP_URL=.*|APP_URL=https://${DOMAIN}|g" .env
 sed -i "s|DB_DATABASE=.*|DB_DATABASE=${DB_NAME}|g" .env
@@ -151,27 +156,29 @@ if ! grep -q "^APP_ENVIRONMENT_ONLY=" .env; then
 fi
 
 # --- Install PHP dependencies ---
+echo "✅ Installing PHP dependencies..."
 COMPOSER_ALLOW_SUPERUSER=1 composer install --no-dev --optimize-autoloader
 
 # --- Generate Application Key ---
-php artisan key:generate --force
+echo "✅ Generating application key..."
+sed -i "s|^APP_KEY=.*|APP_KEY=$(php -r "echo 'base64:'.base64_encode(random_bytes(32));")|" .env
 
 # --- Run Migrations ---
 php artisan migrate --seed --force
 
 # --- Permissions ---
-chown -R www-data:www-data /var/www/pterodactyl/*
+chown -R www-data:www-data /var/www/reviactyl/*
 apt install -y cron
 systemctl enable --now cron
-(crontab -l 2>/dev/null; echo "* * * * * php /var/www/pterodactyl/artisan schedule:run >> /dev/null 2>&1") | crontab -
-
+(crontab -l 2>/dev/null; echo "* * * * * php /var/www/reviactyl/artisan schedule:run >> /dev/null 2>&1") | crontab -
 # --- Nginx Setup ---
-mkdir -p /etc/certs/panel
+mkdir -p /etc/certs/reviactyl
+cd /etc/certs/reviactyl
 openssl req -new -newkey rsa:4096 -days 3650 -nodes -x509 \
-    -subj "/C=NA/ST=NA/L=NA/O=NA/CN=${DOMAIN}" \
-    -keyout /etc/certs/panel/privkey.pem -out /etc/certs/panel/fullchain.pem
+-subj "/C=NA/ST=NA/L=NA/O=NA/CN=Generic SSL Certificate" \
+-keyout privkey.pem -out fullchain.pem
 
-tee /etc/nginx/sites-available/pterodactyl.conf > /dev/null << EOF
+tee /etc/nginx/sites-available/reviactyl.conf > /dev/null << EOF
 server {
     listen 80;
     server_name ${DOMAIN};
@@ -182,11 +189,11 @@ server {
     listen 443 ssl http2;
     server_name ${DOMAIN};
 
-    root /var/www/pterodactyl/public;
+    root /var/www/reviactyl/public;
     index index.php;
 
-    ssl_certificate /etc/certs/panel/fullchain.pem;
-    ssl_certificate_key /etc/certs/panel/privkey.pem;
+    ssl_certificate /etc/certs/reviactyl/fullchain.pem;
+    ssl_certificate_key /etc/certs/reviactyl/privkey.pem;
 
     client_max_body_size 100m;
     client_body_timeout 120s;
@@ -211,37 +218,30 @@ server {
 }
 EOF
 
-ln -sf /etc/nginx/sites-available/pterodactyl.conf /etc/nginx/sites-enabled/pterodactyl.conf
+ln -s /etc/nginx/sites-available/reviactyl.conf /etc/nginx/sites-enabled/reviactyl.conf || true
 nginx -t && systemctl restart nginx
+ok "Nginx online"
 
 # --- Queue Worker ---
-tee /etc/systemd/system/pteroq.service > /dev/null << 'EOF'
+tee /etc/systemd/system/reviq.service > /dev/null << 'EOF'
 [Unit]
-Description=Pterodactyl Queue Worker
+Description=Reviactyl Queue Worker
 After=redis-server.service
-
 [Service]
 User=www-data
 Group=www-data
 Restart=always
-ExecStart=/usr/bin/php /var/www/pterodactyl/artisan queue:work --queue=high,standard,low --sleep=3 --tries=3
+ExecStart=/usr/bin/php /var/www/reviactyl/artisan queue:work --queue=high,standard,low --sleep=3 --tries=3
+StartLimitInterval=180
+StartLimitBurst=30
 RestartSec=5s
-
 [Install]
 WantedBy=multi-user.target
 EOF
 
 systemctl daemon-reload
 systemctl enable --now redis-server
-systemctl enable --now pteroq.service
-ok "Queue running"
-
-clear
-step "Create admin user"
-
-cd /var/www/pterodactyl
-
-# Update .env settings
+systemctl enable --now reviq.service
 sed -i '/^APP_ENVIRONMENT_ONLY=/d' .env
 echo "APP_ENVIRONMENT_ONLY=false" >> .env
 sed -i '/RECAPTCHA_ENABLED=/d' .env
@@ -268,7 +268,7 @@ php artisan view:clear
 php artisan config:clear
 php artisan cache:clear
 php artisan config:cache
-chown -R www-data:www-data /var/www/pterodactyl/*
+chown -R www-data:www-data /var/www/reviactyl/*
 php artisan queue:restart
 
 # --- Admin User ---
@@ -282,5 +282,5 @@ echo -e "  ${GRAY}Panel URL :${NC} ${WHITE}https://$DOMAIN${NC}"
 echo -e "  ${GRAY}Username  :${NC} ${WHITE}$USERNAME${NC}"
 echo -e "  ${GRAY}Password  :${NC} ${WHITE}$PASSWORD${NC}"
 echo -e "  ${GRAY}Email     :${NC} ${WHITE}$EMAIL${NC}"
-echo -e "\n  ${PURPLE}Enjoy your new Pterodactyl Panel!${NC}"
+echo -e "\n  ${PURPLE}Enjoy your new reviactyl Panel!${NC}"
 echo -e "${HEADER_LINE}"

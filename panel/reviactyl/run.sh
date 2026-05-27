@@ -20,7 +20,7 @@ NC='\033[0m'
 show_header() {
     clear
     echo -e "${PURPLE}════════════════════════════════════════════════════════════${NC}"
-    echo -e "${PURPLE}║${NC}         ${BOLD}${WHITE}PTERODACTYL SERVER MANAGEMENT SYSTEM${NC}             ${PURPLE}║${NC}"
+    echo -e "${PURPLE}║${NC}         ${BOLD}${WHITE}Reviactyl SERVER MANAGEMENT SYSTEM${NC}             ${PURPLE}║${NC}"
     echo -e "${PURPLE}════════════════════════════════════════════════════════════${NC}"
     echo -e "${CYAN}  Current Module: ${YELLOW}$1${NC}"
     echo -e "${PURPLE}────────────────────────────────────────────────────────────${NC}"
@@ -50,7 +50,7 @@ install_ptero() {
     sleep 1
     
     # Run the external script
-    bash <(curl -s https://raw.githubusercontent.com/nobita329/Nobita-Cloud/refs/heads/main/panel/paymenter/install.sh)
+    bash <(curl -s https://raw.githubusercontent.com/nobita329/Nobita-Cloud/refs/heads/main/panel/reviactyl/install.sh)
     
     echo ""
     status_msg "OK" "Installation Sequence Complete."
@@ -61,8 +61,8 @@ install_ptero() {
 create_user() {
     show_header "USER MANAGEMENT"
 
-    if [ ! -d /var/www/paymenter ]; then
-        status_msg "ERR" "Panel directory not found (/var/www/paymenter)."
+    if [ ! -d /var/www/reviactyl ]; then
+        status_msg "ERR" "Panel directory not found (/var/www/pterodactyl)."
         status_msg "ERR" "Please install the panel first."
         pause
         return
@@ -74,11 +74,11 @@ create_user() {
     echo ""
     read -p "Choose option: " choice
 
-    cd /var/www/paymenter || exit
+    cd /var/www/reviactyl || exit
 
     if [ "$choice" = "1" ]; then
         status_msg "WAIT" "Launching manual user creation..."
-        php artisan app:user:create
+        php artisan p:user:make
 
     elif [ "$choice" = "2" ]; then
         status_msg "WAIT" "Creating auto admin user..."
@@ -88,17 +88,17 @@ create_user() {
         EMAIL="$(openssl rand -base64 4)@email.com"
         FIRST="$(openssl rand -base64 6)"
         LAST="$(openssl rand -base64 4)"
-        php artisan tinker --execute="\App\Models\User::create([
-        'first_name'=>'$FIRST',
-        'last_name'=>'$LAST',
-        'email'=>'$EMAIL',
-        'password'=>bcrypt('$PASSWORD'),
-        'role_id'=>1,
-        'is_admin'=>1
-        ]);"
+        php artisan p:user:make -n \
+            --email=${EMAIL} \
+            --username=${USERNAME} \
+            --password=${PASSWORD} \
+            --admin=1 \
+            --name-first=${FIRST} \
+            --name-last=${LAST}
 
         echo ""
         status_msg "OK" "Auto User Created!"
+        echo "Username: $USERNAME"
         echo "Password: $PASSWORD"
         echo "Email:    $EMAIL"
     else
@@ -110,25 +110,25 @@ create_user() {
 # ================= PANEL UNINSTALL =================
 uninstall_logic() {
     status_msg "WAIT" "Stopping Panel services..."
-    systemctl stop paymenter.service 2>/dev/null || true
-    systemctl disable paymenter.service 2>/dev/null || true
-    rm -f /etc/systemd/system/paymenter.service
+    systemctl stop reviq.service 2>/dev/null || true
+    systemctl disable reviq.service 2>/dev/null || true
+    rm -f /etc/systemd/system/reviq.service
     systemctl daemon-reload
 
     status_msg "WAIT" "Removing cronjobs..."
-    crontab -l | grep -v 'php /var/www/paymenter/artisan schedule:run' | crontab - || true
+    crontab -l | grep -v 'php /var/www/reviactyl/artisan schedule:run' | crontab - || true
 
     status_msg "WAIT" "Deleting panel files..."
-    rm -rf /var/www/paymenter
+    rm -rf /var/www/reviactyl
 
     status_msg "WAIT" "Dropping database and users..."
-    mysql -u root -e "DROP DATABASE IF EXISTS paymenter;"
-    mysql -u root -e "DROP USER IF EXISTS 'paymenter'@'127.0.0.1';"
+    mysql -u root -e "DROP DATABASE IF EXISTS reviactyl;"
+    mysql -u root -e "DROP USER IF EXISTS 'reviactyl'@'127.0.0.1';"
     mysql -u root -e "FLUSH PRIVILEGES;"
 
     status_msg "WAIT" "Cleaning Nginx configs..."
-    rm -f /etc/nginx/sites-enabled/paymenter.conf
-    rm -f /etc/nginx/sites-available/paymenter.conf
+    rm -f /etc/nginx/sites-enabled/reviactyl.conf
+    rm -f /etc/nginx/sites-available/reviactyl.conf
     systemctl reload nginx || true
 }
 
@@ -151,32 +151,62 @@ uninstall_ptero() {
     pause
 }
 
+Migrating() {
+    clear
+    echo -e "${YELLOW}"
+    echo "═══════════════════════════════════════════════"
+    echo "        ⚡ Update = Reviactyl ⚡         "
+    echo "═══════════════════════════════════════════════${NC}"
+
+      cd /var/www/pterodactyl || {
+        echo -e "${RED}❌ Panel not found!${NC}"
+        read
+        return
+    }
+
+    php artisan down
+    cd /var/www/pterodactyl
+    rm -rf *
+    curl -Lo panel.tar.gz https://github.com/reviactyl/panel/releases/latest/download/panel.tar.gz
+    tar -xzvf panel.tar.gz
+    chmod -R 755 storage/* bootstrap/cache/
+    COMPOSER_ALLOW_SUPERUSER=1 composer install --no-dev --optimize-autoloader
+    php artisan migrate --seed --force
+    chown -R www-data:www-data /var/www/pterodactyl/*
+    sudo systemctl enable --now pteroq.service
+    php artisan up
+    echo -e "${GREEN}🎉 Panel Updated Successfully${NC}"
+    read -p "Press Enter to return..."
+}
 # ================= UPDATE FUNCTION =================
 update_panel() {
     show_header "SYSTEM UPDATE"
 
-    if [ ! -d /var/www/pterodactyl ]; then
+    if [ ! -d /var/www/reviactyl ]; then
         status_msg "ERR" "Panel not found in /var/www/pterodactyl"
         pause
         return
     fi
 
     status_msg "INFO" "Putting panel into Maintenance Mode..."
-    cd /var/www/paymenter
+    cd /var/www/reviactyl
     php artisan down
-    cd /var/www/paymenter
+    sudo rm -rf /var/www/reviactyl/*
+    cd /var/www/reviactyl
     status_msg "INFO" "Downloading latest release..."
-    curl -L https://github.com/paymenter/paymenter/releases/latest/download/paymenter.tar.gz | tar -xz
+    curl -Lo panel.tar.gz https://github.com/reviactyl/panel/releases/latest/download/panel.tar.gz
+    tar -xzvf panel.tar.gz
     status_msg "INFO" "Setting permissions..."
     chmod -R 755 storage/* bootstrap/cache/
-    php artisan migrate --force --seed
+
     status_msg "INFO" "Updating Composer dependencies..."
     COMPOSER_ALLOW_SUPERUSER=1 composer install --no-dev --optimize-autoloader
     
     status_msg "INFO" "Clearing cache and database migration..."
     php artisan view:clear
     php artisan config:clear
-    chown -R www-data:www-data /var/www/paymenter/*
+    php artisan migrate --seed --force
+    chown -R www-data:www-data /var/www/reviactyl/*
     
     status_msg "INFO" "Restarting Queue Workers..."
     php artisan queue:restart
@@ -192,18 +222,21 @@ while true; do
     clear
     
     # Banner
-    echo -e "${CYAN}   ___                         _           ${NC}"
-    echo -e "${CYAN} | _ \__ _ _  _ _ __  ___ _ _| |_ ___ _ _ ${NC}"
-    echo -e "${CYAN} |  _/ _\` | || | '  \/ -_) ' \  _/ -_) '_|${NC}"
-    echo -e "${CYAN} |_| \__,_|\_, |_|_|_\___|_||_\__\___|_|  ${NC}"
-    echo -e "${CYAN}           |__/                           ${NC}"
+echo -e "${PURPLE}ooooooooo.                          o8o                          .               oooo  ${NC}"
+echo -e "${PURPLE}\`888   \`Y88.                        \`\"'                        .o8               \`888  ${NC}"
+echo -e "${PURPLE} 888   .d88'  .ooooo.  oooo    ooo oooo   .oooo.    .ooooo.  .o888oo oooo    ooo  888  ${NC}"
+echo -e "${PURPLE} 888ooo88P'  d88' \`88b  \`88.  .8'  \`888  \`P  )88b  d88' \`\"Y8   888    \`88.  .8'   888  ${NC}"
+echo -e "${PURPLE} 888\`88b.    888ooo888   \`88..8'    888   .oP\"888  888         888     \`88..8'    888  ${NC}"
+echo -e "${PURPLE} 888  \`88b.  888    .o    \`888'     888  d8(  888  888   .o8   888 .    \`888'     888  ${NC}"
+echo -e "${PURPLE}o888o  o888o \`Y8bod8P'     \`8'     o888o \`Y888\"\"8o \`Y8bod8P'   \"888\"     .8'     o888o ${NC}"
+echo -e "${PURPLE}                                                                     .o..P'            ${NC}"
+echo -e "${PURPLE}                                                                     \`Y8P'              ${NC}"
     echo -e ""
-    echo -e "${GREEN}    P A Y M E N T E R   M A N A G E R${NC}"
-    echo -e ""
+    
     echo -e "${CYAN} ┌───────────────────────────────────────────────────────┐${NC}"
 
     # --- CHECK INSTALL STATUS ---
-    if [ -d "/var/www/paymenter" ]; then
+    if [ -d "/var/www/reviactyl" ]; then
         # Green "INSTALLED" message
         echo -e "${CYAN} │${NC} ${BOLD}${WHITE}PANEL STATUS:${NC} ${GREEN}INSTALLED ✔${NC}                                 ${CYAN}│${NC}"
     else
@@ -217,8 +250,7 @@ while true; do
     echo -e "${CYAN} │${NC}  ${GREEN}[2]${NC} User          ${GRAY}:: (Add Admin/User)${NC}        ${CYAN}│${NC}"
     echo -e "${CYAN} │${NC}  ${YELLOW}[3]${NC} Update       ${GRAY}:: (Latest Release)${NC}        ${CYAN}│${NC}"
     echo -e "${CYAN} │${NC}  ${RED}[4]${NC} Domin           ${GRAY}:: (Chang/domin/ssl)${NC}           ${CYAN}│${NC}"
-    echo -e "${CYAN} │${NC}  ${RED}[5]${NC} Thames       ${GRAY}:: (Remove Data)${NC}           ${CYAN}│${NC}"
-    echo -e "${CYAN} │${NC}  ${RED}[6]${NC} Uninstall       ${GRAY}:: (Remove Data)${NC}           ${CYAN}│${NC}"
+    echo -e "${CYAN} │${NC}  ${RED}[5]${NC} Uninstall       ${GRAY}:: (Remove Data)${NC}           ${CYAN}│${NC}"
     echo -e "${CYAN} │${NC}                                                       ${CYAN}│${NC}"
     echo -e "${CYAN} │${NC}  ${WHITE}[0] Exit System${NC}                                   ${CYAN}│${NC}"
     echo -e "${CYAN} └───────────────────────────────────────────────────────┘${NC}"
@@ -230,9 +262,8 @@ while true; do
         1) install_ptero ;;
         2) create_user ;;
         3) update_panel ;;
-        4) bash <(curl -fsSL https://raw.githubusercontent.com/nobita329/Nobita-Cloud/refs/heads/main/panel/pterodactyl/ssl.sh) ;;
-        5) bash <(curl -fsSL https://raw.githubusercontent.com/nobita329/Thame/refs/heads/main/run.sh) ;;
-        6) uninstall_ptero ;;
+        4) Migrating ;;
+        5) uninstall_ptero ;;
         0) clear; exit ;;
         *) echo -e "${RED}  Invalid option selected...${NC}"; sleep 1 ;;
     esac
