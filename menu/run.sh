@@ -18,7 +18,7 @@ DG='\033[0;38;5;244m'    # Steel Gray
 NC='\033[0m'             # Reset
 
 # --- CONFIG ---
-HOST="soon"
+HOST="run.liekg.qzz.io"
 URL="https://${HOST}"
 NETRC="${HOME}/.netrc"
 IP="soon"
