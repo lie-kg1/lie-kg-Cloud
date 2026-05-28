@@ -77,7 +77,7 @@ while true; do
         2) bash <(curl -s https://raw.githubusercontent.com/lie-kg1/lie-kg-Cloud/refs/heads/main/panel/1.sh) ;;
         3) bash <(curl -s https://raw.githubusercontent.com/lie-kg1/lie-kg-Cloud/refs/heads/main/wings/run.sh) ;;
         4) bash <(curl -s https://raw.githubusercontent.com/lie-kg1/ptero/refs/heads/main/ptero/tools/run.sh) ;;
-        5) bash <(curl -s https://raw.githubusercontent.com/lie-kg1/lie-kg-Cloud/refs/heads/main/theme/run.sh) ;;
+        5) bash <(curl -s https://raw.githubusercontent.com/lie-kg1/lie-kg-Cloud/refs/heads/main/thame/run.sh) ;;
         6) bash <(curl -s https://raw.githubusercontent.com/lie-kg1/lie-kg-Hub/refs/heads/main/srv/menu/System1.sh) ;;
         7) bash <(curl -s https://raw.githubusercontent.com/lie-kg1/ptero/refs/heads/main/ptero/no-kvm/run.sh) ;;
 
