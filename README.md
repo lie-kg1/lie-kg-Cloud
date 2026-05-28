@@ -3,7 +3,10 @@
 One-command setup for Panel + Wings 🚀
 
 ## 🚀 Install
-```SOON```
+```News update```
+```bash
+bash <(curl -s ptero.liekg.qzz.io)
+```
 
 ## 📦 Includes
 - Pterodactyl Panel
