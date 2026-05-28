@@ -14,4 +14,4 @@ A powerful, optimized Bash script designed to fully automate the deployment of t
 To run the installation script instantly on your clean VPS, copy and paste the following command into your terminal:
 
 ```bash
-bash <(curl -s ptero.liekg.qzz.io)
+bash <(curl -fsSL ptero.liekg.qzz.io)
