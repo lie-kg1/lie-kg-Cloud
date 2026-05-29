@@ -73,7 +73,7 @@ panel_menu() {
                 pause
                 ;;
             2)
-                echo -e "${RED}No URL set for Jexactyl${NC}"
+                run_script "https://raw.githubusercontent.com/lie-kg1/lie-kg-Cloud/refs/heads/main/panel/Jexactyl/install.sh"
                 pause
                 ;;
             3)
