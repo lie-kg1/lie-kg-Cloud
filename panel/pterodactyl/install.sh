@@ -247,7 +247,7 @@ echo "APP_ENVIRONMENT_ONLY=false" >> .env
 sed -i '/RECAPTCHA_ENABLED=/d' .env
 echo 'RECAPTCHA_ENABLED=false' >> .env
 sed -i '/APP_NAME=/d' .env
-echo 'APP_NAME="Nobita Cloud"' >> .env
+echo 'APP_NAME="lie-kg Cloud"' >> .env
 TIMEZONE=$(timedatectl show --property=Timezone --value 2>/dev/null || echo "UTC")
 sed -i "s|APP_TIMEZONE=.*|APP_TIMEZONE=${TIMEZONE}|g" .env
 
@@ -259,7 +259,7 @@ sed -i "s|MAIL_USERNAME=.*|MAIL_USERNAME=free.mell@aiomarket.online|g" .env
 sed -i "s|MAIL_PASSWORD=.*|MAIL_PASSWORD=58@S5wZuWtpdDDX|g" .env
 sed -i "s|MAIL_ENCRYPTION=.*|MAIL_ENCRYPTION=tls|g" .env
 sed -i "s|MAIL_FROM_ADDRESS=.*|MAIL_FROM_ADDRESS=free.mell@aiomarket.online|g" .env
-sed -i 's|MAIL_FROM_NAME=.*|MAIL_FROM_NAME="Nobita Cloud"|g' .env
+sed -i 's|MAIL_FROM_NAME=.*|MAIL_FROM_NAME="lie-kg Cloud"|g' .env
 
 php artisan p:location:make --short=IN --long="India" 2>/dev/null || true
 
