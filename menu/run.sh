@@ -40,8 +40,8 @@ EOF
     echo -e "${NC}"
 
     echo -e "${VIOLET}╔══════════════════════════════════════════════════════════════════════════════╗${NC}"
-    echo -e "${VIOLET}║${NC}               ${P}☢️  BANE-ANMESH 3S UPLINK ${NEON}— ${Y}VIP ELITE ACCESS${NC}              ${VIOLET}║${NC}"
-    echo -e "${VIOLET}║${NC}               ${DG}v14.0${NC} ${W}|${NC} ${G}SECURE HYPER-VISUAL${NC} ${W}|${NC} ${DG}$(date +"%Y-%m-%d %H:%M:%S")${NC}   ${VIOLET}║${NC}"
+    echo -e "${VIOLET}║${NC}               ${P}☢️  BANE-ANMESH 3S UPLINK ${NEON}— ${Y}VIP ELITE ACCESS${NC}                  ${VIOLET}║${NC}"
+    echo -e "${VIOLET}║${NC}               ${DG}v14.0${NC} ${W}|${NC} ${G}SECURE HYPER-VISUAL${NC} ${W}|${NC} ${DG}$(date +"%Y-%m-%d %H:%M:%S")${NC}              ${VIOLET}║${NC}"
     echo -e "${VIOLET}╚══════════════════════════════════════════════════════════════════════════════╝${NC}"
     
     echo -e "\n${Y}                  ★★★ VIP ACCESS PROTOCOL ACTIVATED ★★★${NC}\n"
