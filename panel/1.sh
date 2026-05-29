@@ -1,70 +1,129 @@
-case $p in
-    1)
-        echo -e "  ${CYAN}➜ Pterodactyl Routine...${NC}"
-        bash <(curl -fsSL https://raw.githubusercontent.com/lie-kg1/lie-kg-Cloud/refs/heads/main/panel/pterodactyl/run.sh)
-        pause
-        ;;
+#!/bin/bash
 
-    2)
-        echo -e "  ${CYAN}➜ Jexactyl Routine...${NC}"
-        echo -e "  ${RED}Not configured yet${NC}"
-        pause
-        ;;
+# --- COLORS ---
+CYAN='\033[38;5;51m'
+PURPLE='\033[38;5;141m'
+GRAY='\033[38;5;242m'
+WHITE='\033[38;5;255m'
+GREEN='\033[38;5;82m'
+RED='\033[38;5;196m'
+GOLD='\033[38;5;220m'
+NC='\033[0m'
 
-    3)
-        echo -e "  ${CYAN}➜ JexPanel Routine...${NC}"
-        echo -e "  ${RED}Not configured yet${NC}"
-        pause
-        ;;
+# --- SAFE RUNNER ---
+run_script() {
+    local url="$1"
 
-    4)
-        echo -e "  ${CYAN}➜ Reviactyl Routine...${NC}"
-        bash <(curl -fsSL https://raw.githubusercontent.com/lie-kg1/lie-kg-Cloud/refs/heads/main/panel/reviactyl/run.sh)
-        pause
-        ;;
+    if [[ -z "$url" ]]; then
+        echo -e "${RED}⚠ Missing URL${NC}"
+        return 1
+    fi
 
-    5)
-        echo -e "  ${CYAN}➜ CtrlPanel Routine...${NC}"
-        echo -e "  ${RED}Not configured yet${NC}"
-        pause
-        ;;
+    echo -e "${CYAN}➜ Running script...${NC}"
+    bash <(curl -fsSL "$url")
 
-    6)
-        echo -e "  ${CYAN}➜ Paymenter Routine...${NC}"
-        bash <(curl -fsSL https://raw.githubusercontent.com/lie-kg1/lie-kg-Cloud/refs/heads/main/panel/paymenter/run.sh)
-        pause
-        ;;
+    if [[ $? -ne 0 ]]; then
+        echo -e "${RED}⚠ Script failed:${NC} $url"
+    fi
+}
 
-    7)
-        echo -e "  ${CYAN}➜ Convoy Routine...${NC}"
-        bash <(curl -fsSL https://raw.githubusercontent.com/lie-kg1/hub/refs/heads/main/liekgCloud/panel/convoy/run.sh)
-        pause
-        ;;
+# --- PAUSE ---
+pause() {
+    echo ""
+    echo -ne "  ${GRAY}Press any key to continue...${NC}"
+    read -n 1 -s -r
+}
 
-    8)
-        echo -e "  ${CYAN}➜ FeatherPanel Routine...${NC}"
-        echo -e "  ${RED}Not configured yet${NC}"
-        pause
-        ;;
+# --- SYSTEM INFO ---
+get_metrics() {
+    UPT=$(uptime -p | sed 's/up //')
+    LOAD=$(uptime | awk -F'load average:' '{print $2}' | cut -d, -f1 | xargs)
+}
 
-    9)
-        echo -e "  ${CYAN}➜ Mythicaldash Routine...${NC}"
-        bash <(curl -fsSL https://raw.githubusercontent.com/lie-kg1/lie-kg-Cloud/refs/heads/main/panel/mythical/run.sh)
-        pause
-        ;;
+# --- HEADER ---
+show_header() {
+    get_metrics
+    clear
+    echo -e "${PURPLE}┌──────────────────────────────────────────────────────────┐${NC}"
+    echo -e "${PURPLE}│${NC}  ${CYAN}🛰️ SERVER PANEL MANAGER${NC} ${GRAY}v15.0${NC}   ${GRAY}$(date +"%H:%M")${NC} ${PURPLE}│${NC}"
+    echo -e "${PURPLE}└──────────────────────────────────────────────────────────┘${NC}"
+    echo -e "  ${CYAN}SYSTEM STATUS${NC}"
+    echo -e "  ${GRAY}├─ Uptime :${NC} ${WHITE}$UPT${NC}"
+    echo -e "  ${GRAY}└─ Load   :${NC} ${WHITE}$LOAD${NC}"
+    echo -e "${GRAY}────────────────────────────────────────────────────────────${NC}"
+}
 
-    10|11)
-        echo -e "  ${RED}Not configured yet${NC}"
-        pause
-        ;;
+# --- MENU ---
+panel_menu() {
+    while true; do
+        show_header
 
-    0)
-        echo -e "\n  ${RED}Shutting down...${NC}"
-        exit 0
-        ;;
+        echo -e "  ${GOLD} AVAILABLE DEPLOYMENTS${NC}"
+        echo -e "  ${GRAY}┌──────────────────────────┬──────────────────────────┐${NC}"
+        echo -e "  ${GRAY}│${NC} ${PURPLE}[1]${NC} Pterodactyl        ${GRAY}│${NC} ${PURPLE}[7]${NC} Convoy           ${GRAY}│${NC}"
+        echo -e "  ${GRAY}│${NC} ${PURPLE}[2]${NC} Jexactyl           ${GRAY}│${NC} ${PURPLE}[8]${NC} FeatherPanel     ${GRAY}│${NC}"
+        echo -e "  ${GRAY}│${NC} ${PURPLE}[3]${NC} JexPanel           ${GRAY}│${NC} ${PURPLE}[9]${NC} Mythicaldash     ${GRAY}│${NC}"
+        echo -e "  ${GRAY}│${NC} ${PURPLE}[4]${NC} Reviactyl          ${GRAY}│${NC} ${PURPLE}[10]${NC} Mythicaldashv3   ${GRAY}│${NC}"
+        echo -e "  ${GRAY}│${NC} ${PURPLE}[5]${NC} CtrlPanel          ${GRAY}│${NC} ${PURPLE}[11]${NC} VPS Panel        ${GRAY}│${NC}"
+        echo -e "  ${GRAY}│${NC} ${PURPLE}[6]${NC} Paymenter          ${GRAY}│${NC} ${RED}[0]${NC} Exit            ${GRAY}│${NC}"
+        echo -e "  ${GRAY}└──────────────────────────┴──────────────────────────┘${NC}"
 
-    *)
-        echo -e "  ${RED}Invalid Selection${NC}"
-        sleep 1
-        ;;
-esac
+        echo ""
+        echo -ne "  ${CYAN}λ Select Module [1-11]:${NC} "
+        read p
+
+        case $p in
+            1)
+                run_script "https://raw.githubusercontent.com/lie-kg1/lie-kg-Cloud/refs/heads/main/panel/pterodactyl/run.sh"
+                pause
+                ;;
+            2)
+                echo -e "${RED}Not configured yet${NC}"
+                pause
+                ;;
+            3)
+                echo -e "${RED}Not configured yet${NC}"
+                pause
+                ;;
+            4)
+                run_script "https://raw.githubusercontent.com/lie-kg1/lie-kg-Cloud/refs/heads/main/panel/reviactyl/run.sh"
+                pause
+                ;;
+            5)
+                echo -e "${RED}Not configured yet${NC}"
+                pause
+                ;;
+            6)
+                run_script "https://raw.githubusercontent.com/lie-kg1/lie-kg-Cloud/refs/heads/main/panel/paymenter/run.sh"
+                pause
+                ;;
+            7)
+                run_script "https://raw.githubusercontent.com/lie-kg1/hub/refs/heads/main/liekgCloud/panel/convoy/run.sh"
+                pause
+                ;;
+            8)
+                echo -e "${RED}Not configured yet${NC}"
+                pause
+                ;;
+            9)
+                run_script "https://raw.githubusercontent.com/lie-kg1/lie-kg-Cloud/refs/heads/main/panel/mythical/run.sh"
+                pause
+                ;;
+            10|11)
+                echo -e "${RED}Not configured yet${NC}"
+                pause
+                ;;
+            0)
+                echo -e "\n${RED}Shutting down...${NC}"
+                exit 0
+                ;;
+            *)
+                echo -e "${RED}Invalid selection${NC}"
+                sleep 1
+                ;;
+        esac
+    done
+}
+
+# --- START ---
+panel_menu
