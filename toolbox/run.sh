@@ -120,12 +120,12 @@ tools_menu() {
 
             8)
                 echo -e "\n${YELLOW}⚙ Installing RDP...${NC}"
-                bash <(curl -s https://raw.githubusercontent.com/lie-kg1/The-Coding-Hub/refs/heads/main/srv/tools/rdp.sh)
+                bash <(curl -s https://raw.githubusercontent.com/lie-kg1/lie-kg-Hub/refs/heads/main/srv/tools/rdp.sh)
                 pause ;;
 
             9)
                 echo -e "\n${YELLOW}⚙ Installing SSL Panel...${NC}"
-                bash <(curl -s https://raw.githubusercontent.com/lie-kg1/hub/refs/heads/main/Codinghub/toolbox/mengssl.sh)
+                bash <(curl -s https://raw.githubusercontent.com/lie-kg1/hub/refs/heads/main/liekgCloud/toolbox/mengssl.sh)
                 pause ;;
 
             0)
