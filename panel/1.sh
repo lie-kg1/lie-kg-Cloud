@@ -41,7 +41,7 @@ show_header() {
     get_metrics
     clear
     echo -e "${PURPLE}┌──────────────────────────────────────────────────────────┐${NC}"
-    echo -e "${PURPLE}│${NC}  ${CYAN}🛰️ SERVER PANEL MANAGER${NC} ${GRAY}v15.0${NC}   ${GRAY}$(date +"%H:%M")${NC} ${PURPLE}│${NC}"
+    echo -e "${PURPLE}│${NC}  ${CYAN}🛰️ SERVER PANEL MANAGER${NC} ${GRAY}v15.0${NC}   ${GRAY}$(date +"%H:%M")${NC}                    ${PURPLE}│${NC}"
     echo -e "${PURPLE}└──────────────────────────────────────────────────────────┘${NC}"
     echo -e "  ${CYAN}SYSTEM STATUS${NC}"
     echo -e "  ${GRAY}├─ Uptime :${NC} ${WHITE}$UPT${NC}"
@@ -55,12 +55,12 @@ panel_menu() {
 
         echo -e "  ${GOLD} AVAILABLE DEPLOYMENTS${NC}"
         echo -e "  ${GRAY}┌──────────────────────────┬──────────────────────────┐${NC}"
-        echo -e "  ${GRAY}│${NC} ${PURPLE}[1]${NC} Pterodactyl        ${GRAY}│${NC} ${PURPLE}[7]${NC} Convoy           ${GRAY}│${NC}"
-        echo -e "  ${GRAY}│${NC} ${PURPLE}[2]${NC} Jexactyl           ${GRAY}│${NC} ${PURPLE}[8]${NC} FeatherPanel     ${GRAY}│${NC}"
-        echo -e "  ${GRAY}│${NC} ${PURPLE}[3]${NC} JexPanel           ${GRAY}│${NC} ${PURPLE}[9]${NC} Mythicaldash     ${GRAY}│${NC}"
-        echo -e "  ${GRAY}│${NC} ${PURPLE}[4]${NC} Reviactyl          ${GRAY}│${NC} ${PURPLE}[10]${NC} Mythicaldashv3   ${GRAY}│${NC}"
-        echo -e "  ${GRAY}│${NC} ${PURPLE}[5]${NC} CtrlPanel          ${GRAY}│${NC} ${PURPLE}[11]${NC} VPS Panel        ${GRAY}│${NC}"
-        echo -e "  ${GRAY}│${NC} ${PURPLE}[6]${NC} Paymenter          ${GRAY}│${NC} ${RED}[0]${NC} Exit            ${GRAY}│${NC}"
+        echo -e "  ${GRAY}│${NC} ${PURPLE}[1]${NC} Pterodactyl          ${GRAY}│${NC} ${PURPLE}[7]${NC} Convoy                 ${GRAY}│${NC}"
+        echo -e "  ${GRAY}│${NC} ${PURPLE}[2]${NC} Jexactyl             ${GRAY}│${NC} ${PURPLE}[8]${NC} FeatherPanel           ${GRAY}│${NC}"
+        echo -e "  ${GRAY}│${NC} ${PURPLE}[3]${NC} JexPanel             ${GRAY}│${NC} ${PURPLE}[9]${NC} Mythicaldash           ${GRAY}│${NC}"
+        echo -e "  ${GRAY}│${NC} ${PURPLE}[4]${NC} Reviactyl            ${GRAY}│${NC} ${PURPLE}[10]${NC} Mythicaldashv3        ${GRAY}│${NC}"
+        echo -e "  ${GRAY}│${NC} ${PURPLE}[5]${NC} CtrlPanel            ${GRAY}│${NC} ${PURPLE}[11]${NC} VPS Panel             ${GRAY}│${NC}"
+        echo -e "  ${GRAY}│${NC} ${PURPLE}[6]${NC} Paymenter            ${GRAY}│${NC} ${RED}[0]${NC} Exit                   ${GRAY}│${NC}"
         echo -e "  ${GRAY}└──────────────────────────┴──────────────────────────┘${NC}"
 
         echo ""
