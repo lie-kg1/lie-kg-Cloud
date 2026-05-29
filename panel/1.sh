@@ -1,111 +1,70 @@
 #!/bin/bash
 
-# =========================
-# COLORS (SAFE)
-# =========================
-RESET="\033[0m"
-BOLD="\033[1m"
+# --- CONFIG & COLORS ---
+CYAN='\033[38;5;51m'
+PURPLE='\033[38;5;141m'
+GRAY='\033[38;5;242m'
+WHITE='\033[38;5;255m'
+GREEN='\033[38;5;82m'
+RED='\033[38;5;196m'
+GOLD='\033[38;5;220m'
+NC='\033[0m'
 
-CYAN="\033[38;5;51m"
-PURPLE="\033[38;5;141m"
-GRAY="\033[38;5;242m"
-WHITE="\033[38;5;255m"
-GREEN="\033[38;5;82m"
-RED="\033[38;5;196m"
-GOLD="\033[38;5;220m"
-
-# =========================
-# SAFE RUNNER
-# =========================
+# --- SAFE RUNNER ---
 run_script() {
     local url="$1"
 
     if [[ -z "$url" ]]; then
-        echo -e "${RED}⚠ Missing URL${RESET}"
+        echo -e "${RED}⚠ No script URL provided!${NC}"
         return 1
     fi
 
-    echo -e "${CYAN}➜ Running script...${RESET}"
+    echo -e "${CYAN}➜ Fetching script...${NC}"
 
-    bash <(curl -fsSL "$url") || {
-        echo -e "${RED}⚠ Failed to run script${RESET}"
-    }
+    if ! bash <(curl -fsSL "$url"); then
+        echo -e "${RED}⚠ Failed to run script from:${NC} $url"
+    fi
 }
 
-# =========================
-# PAUSE
-# =========================
 pause() {
     echo ""
-    echo -ne "  ${GRAY}Press any key...${RESET}"
+    echo -ne "  ${GRAY}Press any key to return...${NC}"
     read -n 1 -s -r
 }
 
-# =========================
-# SYSTEM INFO
-# =========================
 get_metrics() {
     UPT=$(uptime -p | sed 's/up //')
     LOAD=$(uptime | awk -F'load average:' '{print $2}' | cut -d, -f1 | xargs)
 }
 
-# =========================
-# HEADER
-# =========================
 show_header() {
     get_metrics
     clear
-
-    echo -e "${PURPLE}┌──────────────────────────────────────────────────────────┐${RESET}"
-    echo -e "${PURPLE}│${RESET}  ${CYAN}🛰️ SERVER PANEL MANAGER${RESET} ${GRAY}v15.0${RESET}   ${GRAY}$(date +"%H:%M")${RESET} ${PURPLE}│${RESET}"
-    echo -e "${PURPLE}└──────────────────────────────────────────────────────────┘${RESET}"
-
-    echo -e "  ${CYAN}SYSTEM STATUS${RESET}"
-    echo -e "  ${GRAY}├─ Uptime :${RESET} ${WHITE}$UPT${RESET}"
-    echo -e "  ${GRAY}└─ Load   :${RESET} ${WHITE}$LOAD${RESET}"
-
-    echo -e "${GRAY}────────────────────────────────────────────────────────────${RESET}"
+    echo -e "${PURPLE}┌──────────────────────────────────────────────────────────┐${NC}"
+    echo -e "${PURPLE}│${NC}  ${CYAN}🛰️ SERVER PANEL MANAGER${NC} ${GRAY}v15.0${NC}   ${GRAY}$(date +"%H:%M")${NC} ${PURPLE}│${NC}"
+    echo -e "${PURPLE}└──────────────────────────────────────────────────────────┘${NC}"
+    echo -e "  ${CYAN}SYSTEM STATUS${NC}"
+    echo -e "  ${GRAY}├─ Uptime :${NC} ${WHITE}$UPT${NC}"
+    echo -e "  ${GRAY}└─ Load   :${NC} ${WHITE}$LOAD${NC}"
+    echo -e "${GRAY}────────────────────────────────────────────────────────────${NC}"
 }
 
-# =========================
-# MENU
-# =========================
-menu_grid() {
-    echo -e "  ${GOLD} AVAILABLE DEPLOYMENTS${RESET}"
-
-    echo -e "  ${GRAY}┌──────────────────────────┬──────────────────────────┐${RESET}"
-
-    printf "  ${GRAY}│${RESET} ${CYAN}%-24b${RESET} ${GRAY}│${RESET} ${CYAN}%-24b${RESET}\n" \
-    "${BOLD}[1] Pterodactyl" "${BOLD}[7] Convoy"
-
-    printf "  ${GRAY}│${RESET} ${CYAN}%-24b${RESET} ${GRAY}│${RESET} ${CYAN}%-24b${RESET}\n" \
-    "${BOLD}[2] Jexactyl" "${BOLD}[8] FeatherPanel"
-
-    printf "  ${GRAY}│${RESET} ${CYAN}%-24b${RESET} ${GRAY}│${RESET} ${CYAN}%-24b${RESET}\n" \
-    "${BOLD}[3] JexPanel" "${BOLD}[9] Mythicaldash"
-
-    printf "  ${GRAY}│${RESET} ${CYAN}%-24b${RESET} ${GRAY}│${RESET} ${CYAN}%-24b${RESET}\n" \
-    "${BOLD}[4] Reviactyl" "${BOLD}[10] Mythicaldashv3"
-
-    printf "  ${GRAY}│${RESET} ${CYAN}%-24b${RESET} ${GRAY}│${RESET} ${CYAN}%-24b${RESET}\n" \
-    "${BOLD}[5] CtrlPanel" "${BOLD}[11] VPS Panel"
-
-    printf "  ${GRAY}│${RESET} ${CYAN}%-24b${RESET} ${GRAY}│${RESET} ${RED}[0] Exit${RESET}%-17s ${GRAY}│${RESET}\n" \
-    "[6] Paymenter" ""
-    
-    echo -e "  ${GRAY}└──────────────────────────┴──────────────────────────┘${RESET}"
-}
-
-# =========================
-# MAIN LOOP
-# =========================
 panel_menu() {
     while true; do
         show_header
-        menu_grid
+
+        echo -e "  ${GOLD} AVAILABLE DEPLOYMENTS${NC}"
+        echo -e "  ${GRAY}┌──────────────────────────┬──────────────────────────┐${NC}"
+        echo -e "  ${GRAY}│${NC} ${PURPLE}[1]${NC} Pterodactyl        ${GRAY}│${NC} ${PURPLE}[7]${NC} Convoy           ${GRAY}│${NC}"
+        echo -e "  ${GRAY}│${NC} ${PURPLE}[2]${NC} Jexactyl           ${GRAY}│${NC} ${PURPLE}[8]${NC} FeatherPanel     ${GRAY}│${NC}"
+        echo -e "  ${GRAY}│${NC} ${PURPLE}[3]${NC} JexPanel           ${GRAY}│${NC} ${PURPLE}[9]${NC} Mythicaldash     ${GRAY}│${NC}"
+        echo -e "  ${GRAY}│${NC} ${PURPLE}[4]${NC} Reviactyl          ${GRAY}│${NC} ${PURPLE}[10]${NC} Mythicaldashv3   ${GRAY}│${NC}"
+        echo -e "  ${GRAY}│${NC} ${PURPLE}[5]${NC} CtrlPanel          ${GRAY}│${NC} ${PURPLE}[11]${NC} VPS Panel        ${GRAY}│${NC}"
+        echo -e "  ${GRAY}│${NC} ${PURPLE}[6]${NC} Paymenter          ${GRAY}│${NC} ${RED}[0]${NC} Exit            ${GRAY}│${NC}"
+        echo -e "  ${GRAY}└──────────────────────────┴──────────────────────────┘${NC}"
 
         echo ""
-        echo -ne "  ${CYAN}λ Select Module [1-11]:${RESET} "
+        echo -ne "  ${CYAN}λ Select Module [1-11]:${NC} "
         read p
 
         case $p in
@@ -114,11 +73,11 @@ panel_menu() {
                 pause
                 ;;
             2)
-                echo -e "${RED}Not configured${RESET}"
+                echo -e "${RED}No URL set for Jexactyl${NC}"
                 pause
                 ;;
             3)
-                echo -e "${RED}Not configured${RESET}"
+                echo -e "${RED}No URL set for JexPanel${NC}"
                 pause
                 ;;
             4)
@@ -126,7 +85,7 @@ panel_menu() {
                 pause
                 ;;
             5)
-                echo -e "${RED}Not configured${RESET}"
+                echo -e "${RED}No URL set for CtrlPanel${NC}"
                 pause
                 ;;
             6)
@@ -138,7 +97,7 @@ panel_menu() {
                 pause
                 ;;
             8)
-                echo -e "${RED}Not configured${RESET}"
+                echo -e "${RED}No URL set for FeatherPanel${NC}"
                 pause
                 ;;
             9)
@@ -146,22 +105,19 @@ panel_menu() {
                 pause
                 ;;
             10|11)
-                echo -e "${RED}Not configured${RESET}"
+                echo -e "${RED}Not configured yet${NC}"
                 pause
                 ;;
             0)
-                echo -e "\n${RED}Exiting...${RESET}"
+                echo -e "\n${RED}Shutting down...${NC}"
                 exit 0
                 ;;
             *)
-                echo -e "${RED}Invalid option${RESET}"
+                echo -e "${RED}Invalid selection${NC}"
                 sleep 1
                 ;;
         esac
     done
 }
 
-# =========================
-# START
-# =========================
 panel_menu
