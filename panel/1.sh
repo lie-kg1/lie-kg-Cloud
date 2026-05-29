@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # =========================
-# SAFE COLORS (FIXED)
+# COLORS (SAFE)
 # =========================
 RESET="\033[0m"
 BOLD="\033[1m"
@@ -27,9 +27,9 @@ run_script() {
 
     echo -e "${CYAN}➜ Running script...${RESET}"
 
-    if ! bash <(curl -fsSL "$url"); then
-        echo -e "${RED}⚠ Failed: $url${RESET}"
-    fi
+    bash <(curl -fsSL "$url") || {
+        echo -e "${RED}⚠ Failed to run script${RESET}"
+    }
 }
 
 # =========================
@@ -68,36 +68,36 @@ show_header() {
 }
 
 # =========================
-# MENU GRID (FIXED ALIGNMENT + COLORS)
+# MENU
 # =========================
 menu_grid() {
     echo -e "  ${GOLD} AVAILABLE DEPLOYMENTS${RESET}"
 
     echo -e "  ${GRAY}┌──────────────────────────┬──────────────────────────┐${RESET}"
 
-    printf "  ${GRAY}│${RESET} %-24s ${GRAY}│${RESET} %-24s ${RESET}\n" \
-    "${CYAN}[1] Pterodactyl${RESET}" "${CYAN}[7] Convoy${RESET}"
+    printf "  ${GRAY}│${RESET} ${CYAN}%-24b${RESET} ${GRAY}│${RESET} ${CYAN}%-24b${RESET}\n" \
+    "${BOLD}[1] Pterodactyl" "${BOLD}[7] Convoy"
 
-    printf "  ${GRAY}│${RESET} %-24s ${GRAY}│${RESET} %-24s ${RESET}\n" \
-    "${CYAN}[2] Jexactyl${RESET}" "${CYAN}[8] FeatherPanel${RESET}"
+    printf "  ${GRAY}│${RESET} ${CYAN}%-24b${RESET} ${GRAY}│${RESET} ${CYAN}%-24b${RESET}\n" \
+    "${BOLD}[2] Jexactyl" "${BOLD}[8] FeatherPanel"
 
-    printf "  ${GRAY}│${RESET} %-24s ${GRAY}│${RESET} %-24s ${RESET}\n" \
-    "${CYAN}[3] JexPanel${RESET}" "${CYAN}[9] Mythicaldash${RESET}"
+    printf "  ${GRAY}│${RESET} ${CYAN}%-24b${RESET} ${GRAY}│${RESET} ${CYAN}%-24b${RESET}\n" \
+    "${BOLD}[3] JexPanel" "${BOLD}[9] Mythicaldash"
 
-    printf "  ${GRAY}│${RESET} %-24s ${GRAY}│${RESET} %-24s ${RESET}\n" \
-    "${CYAN}[4] Reviactyl${RESET}" "${CYAN}[10] Mythicaldashv3${RESET}"
+    printf "  ${GRAY}│${RESET} ${CYAN}%-24b${RESET} ${GRAY}│${RESET} ${CYAN}%-24b${RESET}\n" \
+    "${BOLD}[4] Reviactyl" "${BOLD}[10] Mythicaldashv3"
 
-    printf "  ${GRAY}│${RESET} %-24s ${GRAY}│${RESET} %-24s ${RESET}\n" \
-    "${CYAN}[5] CtrlPanel${RESET}" "${CYAN}[11] VPS Panel${RESET}"
+    printf "  ${GRAY}│${RESET} ${CYAN}%-24b${RESET} ${GRAY}│${RESET} ${CYAN}%-24b${RESET}\n" \
+    "${BOLD}[5] CtrlPanel" "${BOLD}[11] VPS Panel"
 
-    printf "  ${GRAY}│${RESET} %-24s ${GRAY}│${RESET} %-24s ${RESET}\n" \
-    "${CYAN}[6] Paymenter${RESET}" "${RED}[0] Exit${RESET}"
-
+    printf "  ${GRAY}│${RESET} ${CYAN}%-24b${RESET} ${GRAY}│${RESET} ${RED}[0] Exit${RESET}%-17s ${GRAY}│${RESET}\n" \
+    "[6] Paymenter" ""
+    
     echo -e "  ${GRAY}└──────────────────────────┴──────────────────────────┘${RESET}"
 }
 
 # =========================
-# MAIN MENU
+# MAIN LOOP
 # =========================
 panel_menu() {
     while true; do
@@ -150,11 +150,11 @@ panel_menu() {
                 pause
                 ;;
             0)
-                echo -e "\n${RED}Shutting down...${RESET}"
+                echo -e "\n${RED}Exiting...${RESET}"
                 exit 0
                 ;;
             *)
-                echo -e "${RED}Invalid selection${RESET}"
+                echo -e "${RED}Invalid option${RESET}"
                 sleep 1
                 ;;
         esac
