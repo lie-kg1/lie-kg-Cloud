@@ -1,16 +1,18 @@
 #!/bin/bash
 
 # =========================
-# COLORS
+# SAFE COLORS (FIXED)
 # =========================
-CYAN='\033[38;5;51m'
-PURPLE='\033[38;5;141m'
-GRAY='\033[38;5;242m'
-WHITE='\033[38;5;255m'
-GREEN='\033[38;5;82m'
-RED='\033[38;5;196m'
-GOLD='\033[38;5;220m'
-NC='\033[0m'
+RESET="\033[0m"
+BOLD="\033[1m"
+
+CYAN="\033[38;5;51m"
+PURPLE="\033[38;5;141m"
+GRAY="\033[38;5;242m"
+WHITE="\033[38;5;255m"
+GREEN="\033[38;5;82m"
+RED="\033[38;5;196m"
+GOLD="\033[38;5;220m"
 
 # =========================
 # SAFE RUNNER
@@ -19,14 +21,14 @@ run_script() {
     local url="$1"
 
     if [[ -z "$url" ]]; then
-        echo -e "${RED}⚠ Missing URL${NC}"
+        echo -e "${RED}⚠ Missing URL${RESET}"
         return 1
     fi
 
-    echo -e "${CYAN}➜ Running script...${NC}"
+    echo -e "${CYAN}➜ Running script...${RESET}"
 
     if ! bash <(curl -fsSL "$url"); then
-        echo -e "${RED}⚠ Failed: $url${NC}"
+        echo -e "${RED}⚠ Failed: $url${RESET}"
     fi
 }
 
@@ -35,7 +37,7 @@ run_script() {
 # =========================
 pause() {
     echo ""
-    echo -ne "  ${GRAY}Press any key to continue...${NC}"
+    echo -ne "  ${GRAY}Press any key...${RESET}"
     read -n 1 -s -r
 }
 
@@ -53,32 +55,45 @@ get_metrics() {
 show_header() {
     get_metrics
     clear
-    echo -e "${PURPLE}┌──────────────────────────────────────────────────────────┐${NC}"
-    echo -e "${PURPLE}│${NC}  ${CYAN}🛰️ SERVER PANEL MANAGER${NC} ${GRAY}v15.0${NC}   ${GRAY}$(date +"%H:%M")${NC} ${PURPLE}│${NC}"
-    echo -e "${PURPLE}└──────────────────────────────────────────────────────────┘${NC}"
 
-    echo -e "  ${CYAN}SYSTEM STATUS${NC}"
-    echo -e "  ${GRAY}├─ Uptime :${NC} ${WHITE}$UPT${NC}"
-    echo -e "  ${GRAY}└─ Load   :${NC} ${WHITE}$LOAD${NC}"
-    echo -e "${GRAY}────────────────────────────────────────────────────────────${NC}"
+    echo -e "${PURPLE}┌──────────────────────────────────────────────────────────┐${RESET}"
+    echo -e "${PURPLE}│${RESET}  ${CYAN}🛰️ SERVER PANEL MANAGER${RESET} ${GRAY}v15.0${RESET}   ${GRAY}$(date +"%H:%M")${RESET} ${PURPLE}│${RESET}"
+    echo -e "${PURPLE}└──────────────────────────────────────────────────────────┘${RESET}"
+
+    echo -e "  ${CYAN}SYSTEM STATUS${RESET}"
+    echo -e "  ${GRAY}├─ Uptime :${RESET} ${WHITE}$UPT${RESET}"
+    echo -e "  ${GRAY}└─ Load   :${RESET} ${WHITE}$LOAD${RESET}"
+
+    echo -e "${GRAY}────────────────────────────────────────────────────────────${RESET}"
 }
 
 # =========================
-# MENU GRID (FIXED ALIGNMENT)
+# MENU GRID (FIXED ALIGNMENT + COLORS)
 # =========================
 menu_grid() {
-    echo -e "  ${GOLD} AVAILABLE DEPLOYMENTS${NC}"
+    echo -e "  ${GOLD} AVAILABLE DEPLOYMENTS${RESET}"
 
-    echo -e "  ${GRAY}┌──────────────────────────┬──────────────────────────┐${NC}"
+    echo -e "  ${GRAY}┌──────────────────────────┬──────────────────────────┐${RESET}"
 
-    printf "  ${GRAY}│${NC} %-24s ${GRAY}│${NC} %-24s ${NC}\n" "[1] Pterodactyl" "[7] Convoy"
-    printf "  ${GRAY}│${NC} %-24s ${GRAY}│${NC} %-24s ${NC}\n" "[2] Jexactyl" "[8] FeatherPanel"
-    printf "  ${GRAY}│${NC} %-24s ${GRAY}│${NC} %-24s ${NC}\n" "[3] JexPanel" "[9] Mythicaldash"
-    printf "  ${GRAY}│${NC} %-24s ${GRAY}│${NC} %-24s ${NC}\n" "[4] Reviactyl" "[10] Mythicaldashv3"
-    printf "  ${GRAY}│${NC} %-24s ${GRAY}│${NC} %-24s ${NC}\n" "[5] CtrlPanel" "[11] VPS Panel"
-    printf "  ${GRAY}│${NC} %-24s ${GRAY}│${NC} %-24s ${NC}\n" "[6] Paymenter" "[0] Exit"
+    printf "  ${GRAY}│${RESET} %-24s ${GRAY}│${RESET} %-24s ${RESET}\n" \
+    "${CYAN}[1] Pterodactyl${RESET}" "${CYAN}[7] Convoy${RESET}"
 
-    echo -e "  ${GRAY}└──────────────────────────┴──────────────────────────┘${NC}"
+    printf "  ${GRAY}│${RESET} %-24s ${GRAY}│${RESET} %-24s ${RESET}\n" \
+    "${CYAN}[2] Jexactyl${RESET}" "${CYAN}[8] FeatherPanel${RESET}"
+
+    printf "  ${GRAY}│${RESET} %-24s ${GRAY}│${RESET} %-24s ${RESET}\n" \
+    "${CYAN}[3] JexPanel${RESET}" "${CYAN}[9] Mythicaldash${RESET}"
+
+    printf "  ${GRAY}│${RESET} %-24s ${GRAY}│${RESET} %-24s ${RESET}\n" \
+    "${CYAN}[4] Reviactyl${RESET}" "${CYAN}[10] Mythicaldashv3${RESET}"
+
+    printf "  ${GRAY}│${RESET} %-24s ${GRAY}│${RESET} %-24s ${RESET}\n" \
+    "${CYAN}[5] CtrlPanel${RESET}" "${CYAN}[11] VPS Panel${RESET}"
+
+    printf "  ${GRAY}│${RESET} %-24s ${GRAY}│${RESET} %-24s ${RESET}\n" \
+    "${CYAN}[6] Paymenter${RESET}" "${RED}[0] Exit${RESET}"
+
+    echo -e "  ${GRAY}└──────────────────────────┴──────────────────────────┘${RESET}"
 }
 
 # =========================
@@ -90,7 +105,7 @@ panel_menu() {
         menu_grid
 
         echo ""
-        echo -ne "  ${CYAN}λ Select Module [1-11]:${NC} "
+        echo -ne "  ${CYAN}λ Select Module [1-11]:${RESET} "
         read p
 
         case $p in
@@ -99,11 +114,11 @@ panel_menu() {
                 pause
                 ;;
             2)
-                echo -e "${RED}Not configured${NC}"
+                echo -e "${RED}Not configured${RESET}"
                 pause
                 ;;
             3)
-                echo -e "${RED}Not configured${NC}"
+                echo -e "${RED}Not configured${RESET}"
                 pause
                 ;;
             4)
@@ -111,7 +126,7 @@ panel_menu() {
                 pause
                 ;;
             5)
-                echo -e "${RED}Not configured${NC}"
+                echo -e "${RED}Not configured${RESET}"
                 pause
                 ;;
             6)
@@ -123,7 +138,7 @@ panel_menu() {
                 pause
                 ;;
             8)
-                echo -e "${RED}Not configured${NC}"
+                echo -e "${RED}Not configured${RESET}"
                 pause
                 ;;
             9)
@@ -131,15 +146,15 @@ panel_menu() {
                 pause
                 ;;
             10|11)
-                echo -e "${RED}Not configured${NC}"
+                echo -e "${RED}Not configured${RESET}"
                 pause
                 ;;
             0)
-                echo -e "\n${RED}Shutting down...${NC}"
+                echo -e "\n${RED}Shutting down...${RESET}"
                 exit 0
                 ;;
             *)
-                echo -e "${RED}Invalid selection${NC}"
+                echo -e "${RED}Invalid selection${RESET}"
                 sleep 1
                 ;;
         esac
