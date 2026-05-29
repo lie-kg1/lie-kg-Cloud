@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
+
 # =========================================================
-# FILE: thames.sh
+# lie_kg.dev CONTROL PANEL UI (FIXED VERSION)
 # =========================================================
 
 set -euo pipefail
@@ -12,6 +13,11 @@ set -euo pipefail
     echo "Run as root!"
     exit 1
 }
+
+# =========================================================
+# PATH FIX
+# =========================================================
+export PATH=$PATH:/usr/local/bin:/usr/bin:/bin
 
 # =========================================================
 # COLORS
@@ -36,11 +42,10 @@ BW="\e[1;97m"
 # =========================================================
 BASE_DIR="/var/www/pterodactyl"
 EXT_DIR="$BASE_DIR/storage/extensions"
-
 URL="https://github.com/lie-kg1/lie-kg-Cloud/raw/refs/heads/main/thame/UI"
 
 # =========================================================
-# EXIT TRAP
+# TRAP
 # =========================================================
 trap 'echo -e "\n${R}[!] Force exit detected.${N}"; exit 1' SIGINT
 
@@ -78,63 +83,23 @@ get_title() {
 }
 
 # =========================================================
-# CHECK DEPENDENCIES
-# =========================================================
-check_dependencies() {
-
-    local missing=()
-
-    command -v curl >/dev/null 2>&1 || missing+=("curl")
-    command -v blueprint >/dev/null 2>&1 || missing+=("blueprint")
-
-    if (( ${#missing[@]} > 0 )); then
-        echo -e "${R}Missing:${N} ${missing[*]}"
-        exit 1
-    fi
-}
-
-# =========================================================
-# INSTALL CHECK
+# CHECK INSTALL
 # =========================================================
 is_installed() {
-
-    local slug="${1%.blueprint}"
-
-    [[ -d "$EXT_DIR/$slug" ]]
+    [[ -d "$EXT_DIR/${1%.blueprint}" ]]
 }
 
 # =========================================================
-# HEADER
-# =========================================================
-header() {
-
-    clear
-
-    echo -e "${BC} ╔══════════════════════════════════════════════════════════╗${N}"
-    printf " ${BC}║${BW}%-58s${BC}║${N}\n" "$(get_title)"
-    printf " ${BC}║${B}%-58s${BC}║${N}\n" "      Minimal • Clean • High Performance      "
-    echo -e "${BC} ╚══════════════════════════════════════════════════════════╝${N}"
-
-    echo -e " ${B}User:${N} $(whoami)"
-    echo -e " ${B}Host:${N} $(hostname)"
-    echo -e " ${B}Time:${N} $(date +"%H:%M:%S")"
-
-    echo -e "${C} ──────────────────────────────────────────────────────────${N}"
-}
-
-# =========================================================
-# SPINNER
+# SPINNER (FIXED)
 # =========================================================
 spinner() {
-
-    local pid=$!
-    local delay=0.08
+    local pid="$1"
     local spin='⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏'
 
-    while ps -p $pid >/dev/null 2>&1; do
-        for i in $(seq 0 9); do
+    while kill -0 "$pid" 2>/dev/null; do
+        for ((i=0; i<${#spin}; i++)); do
             printf "\r ${C}%s${N} Processing..." "${spin:$i:1}"
-            sleep $delay
+            sleep 0.08
         done
     done
 
@@ -142,7 +107,7 @@ spinner() {
 }
 
 # =========================================================
-# INSTALL THEME
+# INSTALL THEME (FIXED)
 # =========================================================
 install_theme() {
 
@@ -155,13 +120,19 @@ install_theme() {
 
     echo -e "\n${G}Installing:${N} ${BW}${theme%.blueprint}${N}"
 
+    curl -fsSL "$URL/$theme" -o "$theme" || {
+        echo -e "${R}Download failed${N}"
+        return
+    }
+
     (
-        curl -fsSL "$URL/$theme" -o "$theme" &&
-        yes | blueprint -i "$theme" >/dev/null 2>&1 &&
+        yes | blueprint -i "$theme" >/dev/null 2>&1
         rm -f "$theme"
     ) &
 
-    spinner
+    pid=$!
+    spinner "$pid"
+    wait "$pid"
 
     if is_installed "$theme"; then
         echo -e "${BG}✔ Install Success${N}"
@@ -171,7 +142,7 @@ install_theme() {
 }
 
 # =========================================================
-# REMOVE THEME
+# REMOVE THEME (FIXED)
 # =========================================================
 remove_theme() {
 
@@ -188,7 +159,9 @@ remove_theme() {
         yes | blueprint -r "${theme%.blueprint}" >/dev/null 2>&1
     ) &
 
-    spinner
+    pid=$!
+    spinner "$pid"
+    wait "$pid"
 
     if ! is_installed "$theme"; then
         echo -e "${BG}✔ Remove Success${N}"
@@ -202,116 +175,79 @@ remove_theme() {
 # =========================================================
 show_menu() {
 
-    header
+    clear
 
-    echo -e "${BW} SELECT A THEME UI:${N}\n"
+    echo -e "${BC} ╔══════════════════════════════════════════════════════════╗${N}"
+    printf " ${BC}║${BW}%-58s${BC}║${N}\n" "$(get_title)"
+    printf " ${BC}║${B}%-58s${BC}║${N}\n" "      Minimal • Clean • High Performance      "
+    echo -e "${BC} ╚══════════════════════════════════════════════════════════╝${N}"
 
-    local count=0
+    echo ""
 
     for i in "${!themes[@]}"; do
+        num=$((i+1))
+        name="${themes[$i]}"
+        clean="${name%.blueprint}"
 
-        num=$((i + 1))
-        theme="${themes[$i]}"
-        clean="${theme%.blueprint}"
-
-        if is_installed "$theme"; then
+        if is_installed "$name"; then
             status="${BG}●${N}"
         else
             status="${BR}○${N}"
         fi
 
-        printf "  ${BG}%2d${N} %-24s %b   " \
-            "$num" "$clean" "$status"
-
-        ((count++))
-
-        if (( count % 2 == 0 )); then
-            echo ""
-        fi
+        printf "  ${BG}%2d${N} %-25s %b\n" "$num" "$clean" "$status"
     done
 
     echo ""
+    echo -e "  ${BR}0${N} Exit"
+}
+
+# =========================================================
+# MAIN LOOP
+# =========================================================
+while true; do
+
+    show_menu
+
+    read -rp " 👉 Enter choice: " opt
+
+    [[ ! "$opt" =~ ^[0-9]+$ ]] && {
+        echo -e "${R}Invalid input${N}"
+        sleep 1
+        continue
+    }
+
+    [[ "$opt" == "0" ]] && {
+        echo -e "${M}Bye!${N}"
+        exit 0
+    }
+
+    index=$((opt-1))
+    theme="${themes[$index]:-}"
+
+    [[ -z "$theme" ]] && {
+        echo -e "${R}Invalid option${N}"
+        sleep 1
+        continue
+    }
+
     echo ""
-    echo -e "  ${BR} 0 ${N} Exit"
+    echo -e "Selected: ${BW}${theme%.blueprint}${N}"
+    echo ""
+    echo -e "  [1] Install"
+    echo -e "  [2] Remove"
+    echo -e "  [0] Back"
+    echo ""
 
-    echo -e "${C} ──────────────────────────────────────────────────────────${N}"
-}
+    read -rp " 👉 Action: " action
 
-# =========================================================
-# MAIN
-# =========================================================
-main() {
+    case "$action" in
+        1) install_theme "$theme" ;;
+        2) remove_theme "$theme" ;;
+        0) continue ;;
+        *) echo -e "${R}Invalid action${N}" ;;
+    esac
 
-    check_dependencies
-
-    while true; do
-
-        show_menu
-
-        read -rp " 👉 Enter choice: " opt
-
-        [[ ! "$opt" =~ ^[0-9]+$ ]] && {
-            echo -e "\n${R}Invalid input${N}"
-            sleep 1
-            continue
-        }
-
-        if [[ "$opt" == "0" ]]; then
-            echo -e "\n${M}👋 Goodbye from lie_kg.dev${N}"
-            exit 0
-        fi
-
-        index=$((opt - 1))
-
-        theme="${themes[$index]:-}"
-
-        if [[ -z "${theme:-}" ]]; then
-            echo -e "\n${R}Invalid option${N}"
-            sleep 1
-            continue
-        fi
-
-        clean="${theme%.blueprint}"
-
-        header
-
-        if is_installed "$theme"; then
-            status="${BG}INSTALLED${N}"
-        else
-            status="${BR}NOT INSTALLED${N}"
-        fi
-
-        echo -e " ${BW}Selected:${N} $clean"
-        echo -e " ${BW}Status:${N}   $status"
-
-        echo -e "${C} ──────────────────────────────────────────────────────────${N}"
-
-        echo -e "  ${BG}[ 1 ]${N} Install"
-        echo -e "  ${BR}[ 2 ]${N} Remove"
-        echo -e "  ${BY}[ 0 ]${N} Back"
-
-        echo -e "${C} ──────────────────────────────────────────────────────────${N}"
-
-        read -rp " 👉 Action: " action
-
-        case "$action" in
-            1)
-                install_theme "$theme"
-                ;;
-            2)
-                remove_theme "$theme"
-                ;;
-            0)
-                continue
-                ;;
-            *)
-                echo -e "${R}Invalid action${N}"
-                ;;
-        esac
-
-        echo ""
-        read -rp " ↩️ Press Enter to continue..."
-    done
-}
-
-main
+    echo ""
+    read -rp "Press Enter..."
+done
