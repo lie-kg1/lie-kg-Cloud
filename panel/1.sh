@@ -1,6 +1,8 @@
 #!/bin/bash
 
-# --- COLORS ---
+# =========================
+# COLORS
+# =========================
 CYAN='\033[38;5;51m'
 PURPLE='\033[38;5;141m'
 GRAY='\033[38;5;242m'
@@ -10,7 +12,9 @@ RED='\033[38;5;196m'
 GOLD='\033[38;5;220m'
 NC='\033[0m'
 
-# --- SAFE RUNNER ---
+# =========================
+# SAFE RUNNER
+# =========================
 run_script() {
     local url="$1"
 
@@ -20,53 +24,70 @@ run_script() {
     fi
 
     echo -e "${CYAN}➜ Running script...${NC}"
-    bash <(curl -fsSL "$url")
 
-    if [[ $? -ne 0 ]]; then
-        echo -e "${RED}⚠ Script failed:${NC} $url"
+    if ! bash <(curl -fsSL "$url"); then
+        echo -e "${RED}⚠ Failed: $url${NC}"
     fi
 }
 
-# --- PAUSE ---
+# =========================
+# PAUSE
+# =========================
 pause() {
     echo ""
     echo -ne "  ${GRAY}Press any key to continue...${NC}"
     read -n 1 -s -r
 }
 
-# --- SYSTEM INFO ---
+# =========================
+# SYSTEM INFO
+# =========================
 get_metrics() {
     UPT=$(uptime -p | sed 's/up //')
     LOAD=$(uptime | awk -F'load average:' '{print $2}' | cut -d, -f1 | xargs)
 }
 
-# --- HEADER ---
+# =========================
+# HEADER
+# =========================
 show_header() {
     get_metrics
     clear
     echo -e "${PURPLE}┌──────────────────────────────────────────────────────────┐${NC}"
     echo -e "${PURPLE}│${NC}  ${CYAN}🛰️ SERVER PANEL MANAGER${NC} ${GRAY}v15.0${NC}   ${GRAY}$(date +"%H:%M")${NC} ${PURPLE}│${NC}"
     echo -e "${PURPLE}└──────────────────────────────────────────────────────────┘${NC}"
+
     echo -e "  ${CYAN}SYSTEM STATUS${NC}"
     echo -e "  ${GRAY}├─ Uptime :${NC} ${WHITE}$UPT${NC}"
     echo -e "  ${GRAY}└─ Load   :${NC} ${WHITE}$LOAD${NC}"
     echo -e "${GRAY}────────────────────────────────────────────────────────────${NC}"
 }
 
-# --- MENU ---
+# =========================
+# MENU GRID (FIXED ALIGNMENT)
+# =========================
+menu_grid() {
+    echo -e "  ${GOLD} AVAILABLE DEPLOYMENTS${NC}"
+
+    echo -e "  ${GRAY}┌──────────────────────────┬──────────────────────────┐${NC}"
+
+    printf "  ${GRAY}│${NC} %-24s ${GRAY}│${NC} %-24s ${NC}\n" "[1] Pterodactyl" "[7] Convoy"
+    printf "  ${GRAY}│${NC} %-24s ${GRAY}│${NC} %-24s ${NC}\n" "[2] Jexactyl" "[8] FeatherPanel"
+    printf "  ${GRAY}│${NC} %-24s ${GRAY}│${NC} %-24s ${NC}\n" "[3] JexPanel" "[9] Mythicaldash"
+    printf "  ${GRAY}│${NC} %-24s ${GRAY}│${NC} %-24s ${NC}\n" "[4] Reviactyl" "[10] Mythicaldashv3"
+    printf "  ${GRAY}│${NC} %-24s ${GRAY}│${NC} %-24s ${NC}\n" "[5] CtrlPanel" "[11] VPS Panel"
+    printf "  ${GRAY}│${NC} %-24s ${GRAY}│${NC} %-24s ${NC}\n" "[6] Paymenter" "[0] Exit"
+
+    echo -e "  ${GRAY}└──────────────────────────┴──────────────────────────┘${NC}"
+}
+
+# =========================
+# MAIN MENU
+# =========================
 panel_menu() {
     while true; do
         show_header
-
-        echo -e "  ${GOLD} AVAILABLE DEPLOYMENTS${NC}"
-        echo -e "  ${GRAY}┌──────────────────────────┬──────────────────────────┐${NC}"
-        echo -e "  ${GRAY}│${NC} ${PURPLE}[1]${NC} Pterodactyl        ${GRAY}│${NC} ${PURPLE}[7]${NC} Convoy           ${GRAY}│${NC}"
-        echo -e "  ${GRAY}│${NC} ${PURPLE}[2]${NC} Jexactyl           ${GRAY}│${NC} ${PURPLE}[8]${NC} FeatherPanel     ${GRAY}│${NC}"
-        echo -e "  ${GRAY}│${NC} ${PURPLE}[3]${NC} JexPanel           ${GRAY}│${NC} ${PURPLE}[9]${NC} Mythicaldash     ${GRAY}│${NC}"
-        echo -e "  ${GRAY}│${NC} ${PURPLE}[4]${NC} Reviactyl          ${GRAY}│${NC} ${PURPLE}[10]${NC} Mythicaldashv3   ${GRAY}│${NC}"
-        echo -e "  ${GRAY}│${NC} ${PURPLE}[5]${NC} CtrlPanel          ${GRAY}│${NC} ${PURPLE}[11]${NC} VPS Panel        ${GRAY}│${NC}"
-        echo -e "  ${GRAY}│${NC} ${PURPLE}[6]${NC} Paymenter          ${GRAY}│${NC} ${RED}[0]${NC} Exit            ${GRAY}│${NC}"
-        echo -e "  ${GRAY}└──────────────────────────┴──────────────────────────┘${NC}"
+        menu_grid
 
         echo ""
         echo -ne "  ${CYAN}λ Select Module [1-11]:${NC} "
@@ -78,11 +99,11 @@ panel_menu() {
                 pause
                 ;;
             2)
-                echo -e "${RED}Not configured yet${NC}"
+                echo -e "${RED}Not configured${NC}"
                 pause
                 ;;
             3)
-                echo -e "${RED}Not configured yet${NC}"
+                echo -e "${RED}Not configured${NC}"
                 pause
                 ;;
             4)
@@ -90,7 +111,7 @@ panel_menu() {
                 pause
                 ;;
             5)
-                echo -e "${RED}Not configured yet${NC}"
+                echo -e "${RED}Not configured${NC}"
                 pause
                 ;;
             6)
@@ -102,7 +123,7 @@ panel_menu() {
                 pause
                 ;;
             8)
-                echo -e "${RED}Not configured yet${NC}"
+                echo -e "${RED}Not configured${NC}"
                 pause
                 ;;
             9)
@@ -110,7 +131,7 @@ panel_menu() {
                 pause
                 ;;
             10|11)
-                echo -e "${RED}Not configured yet${NC}"
+                echo -e "${RED}Not configured${NC}"
                 pause
                 ;;
             0)
@@ -125,5 +146,7 @@ panel_menu() {
     done
 }
 
-# --- START ---
+# =========================
+# START
+# =========================
 panel_menu
