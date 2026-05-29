@@ -74,7 +74,7 @@ ask() {
 show_banner
 
 # --- DATA COLLECTION ---
-ask "Panel Domain" "phpmyadmin.nobita.indevs.in" DOMAIN
+ask "Panel Domain" "panel.example.com" DOMAIN
 ask "Admin Name"   "phpmyadmin" DB_NAME
 ask "Admin User"   "phpmyadmin" DB_USER
 ask "Admin Pass"   "phpmyadmin" DB_PASS
