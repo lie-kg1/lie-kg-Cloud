@@ -1,8 +1,7 @@
 #!/bin/bash
 
 # ==================================================
-# FEATHERPANEL UPDATER
-# Fast • Safe • Production Ready
+# FEATHERPANEL UPDATER (FIXED SMART VERSION)
 # ==================================================
 
 C_RESET="\e[0m"
@@ -26,26 +25,36 @@ echo -e "${C_RESET}"
 
 line
 
-INSTALL_DIR="/opt/featherpanel"
+# ---------------- AUTO DETECT INSTALL ----------------
+INSTALL_DIR=""
 
-# ---------------- CHECK INSTALL ----------------
-if [ ! -d "$INSTALL_DIR" ]; then
+if [ -d "/opt/featherpanel" ]; then
+  INSTALL_DIR="/opt/featherpanel"
+elif [ -d "/var/www/featherpanel" ]; then
+  INSTALL_DIR="/var/www/featherpanel"
+fi
+
+if [ -z "$INSTALL_DIR" ]; then
   err "FeatherPanel is not installed"
+  echo -e "${C_YELLOW}Tip: run installer first${C_RESET}"
   exit 1
 fi
 
-cd "$INSTALL_DIR" || exit
+ok "Detected install: $INSTALL_DIR"
 
-step "Checking repository..."
+cd "$INSTALL_DIR" || exit 1
+
+line
 
 # ---------------- CHECK GIT ----------------
 if [ ! -d ".git" ]; then
-  err "Not a git installation (update not possible)"
+  err "Not a git installation (cannot update)"
+  echo -e "${C_YELLOW}Reinstall using run.sh to fix this${C_RESET}"
   exit 1
 fi
 
 # ---------------- FETCH ----------------
-step "Fetching latest updates..."
+step "Fetching updates..."
 git fetch origin main
 
 LOCAL=$(git rev-parse HEAD)
@@ -57,19 +66,26 @@ if [ "$LOCAL" = "$REMOTE" ]; then
   exit 0
 fi
 
-# ---------------- PULL ----------------
-step "Updating files..."
+# ---------------- UPDATE ----------------
+step "Pulling latest changes..."
 git pull origin main
 
-# ---------------- BUILD ----------------
-step "Rebuilding (if Go project exists)..."
+# ---------------- REBUILD (SAFE CHECKS) ----------------
+step "Rebuilding project..."
 
-if [ -f "main.go" ]; then
-  go build -o featherpanel main.go
-  chmod +x featherpanel
-  ok "Go build completed"
-else
-  step "No Go build found, skipping"
+if [ -f "backend/package.json" ]; then
+  cd backend
+  npm install
+  ok "Backend updated"
+  cd ..
+fi
+
+if [ -d "frontend" ]; then
+  cd frontend
+  npm install
+  npm run build
+  ok "Frontend rebuilt"
+  cd ..
 fi
 
 line
