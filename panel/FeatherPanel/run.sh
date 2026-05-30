@@ -21,23 +21,25 @@ else
 fi
 
 # ===== HEADER =====
-echo -e "${CYAN}${BOLD}╭───────────────────────────────────────╮${RESET}"
-echo -e "${CYAN}${BOLD}│               FEATHERPANEL           │${RESET}"
-echo -e "${CYAN}${BOLD}├──────────────────────────────────────┤${RESET}"
+echo -e "${CYAN}┌───────────────────────────────────────┐${RESET}"
+echo -e "${CYAN}│               FEATHERPANEL            │${RESET}"
+echo -e "${CYAN}├───────────────────────────────────────┤${RESET}"
 
-echo -e "│ FEATHERPANEL STATUS: $STATUS │"
+# ===== STATUS LINE (FIXED BORDER COLOR ISSUE) =====
+echo -e "${CYAN}│${RESET} FEATHERPANEL STATUS: $STATUS ${CYAN}│${RESET}"
 
-echo -e "${CYAN}${BOLD}├──────────────────────────────────────┤${RESET}"
+echo -e "${CYAN}├───────────────────────────────────────┤${RESET}"
 
 # ===== MENU =====
-echo -e "│  ${GREEN}[1]${RESET} Install FeatherPanel            │"
-echo -e "│  ${YELLOW}[2]${RESET} Update Release                  │"
-echo -e "│  ${BLUE}[3]${RESET} Domain                          │"
-echo -e "│  ${RED}[4]${RESET} Uninstall Panel                 │"
+echo -e "${CYAN}│${RESET}  ${GREEN}[1]${RESET} Install FeatherPanel             ${CYAN}│${RESET}"
+echo -e "${CYAN}│${RESET}  ${YELLOW}[2]${RESET} Update Release                   ${CYAN}│${RESET}"
+echo -e "${CYAN}│${RESET}  ${BLUE}[3]${RESET} Domain                           ${CYAN}│${RESET}"
+echo -e "${CYAN}│${RESET}  ${RED}[4]${RESET} Uninstall Panel                  ${CYAN}│${RESET}"
+echo -e "${CYAN}│${RESET}  ${PURPLE}[5]${RESET} phpMyAdmin                      ${CYAN}│${RESET}"
 
-echo -e "${CYAN}${BOLD}├──────────────────────────────────────┤${RESET}"
-echo -e "│  ${WHITE}[0]${RESET} Exit                            │"
-echo -e "${CYAN}${BOLD}╰───────────────────────────────────────╯${RESET}"
+echo -e "${CYAN}├───────────────────────────────────────┤${RESET}"
+echo -e "${CYAN}│${RESET}  ${WHITE}[0]${RESET} Exit                             ${CYAN}│${RESET}"
+echo -e "${CYAN}└───────────────────────────────────────┘${RESET}"
 
 echo
 read -rp "Select option: " opt
