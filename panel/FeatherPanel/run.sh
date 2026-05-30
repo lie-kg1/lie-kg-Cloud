@@ -21,23 +21,23 @@ else
 fi
 
 # ===== HEADER =====
-echo -e "${CYAN}${BOLD}╭──────────────────────────────────────╮${RESET}"
+echo -e "${CYAN}${BOLD}╭───────────────────────────────────────╮${RESET}"
 echo -e "${CYAN}${BOLD}│               FEATHERPANEL           │${RESET}"
 echo -e "${CYAN}${BOLD}├──────────────────────────────────────┤${RESET}"
 
-echo -e "│ FEATHERPANEL STATUS: $STATUS        │"
+echo -e "│ FEATHERPANEL STATUS: $STATUS │"
 
 echo -e "${CYAN}${BOLD}├──────────────────────────────────────┤${RESET}"
 
 # ===== MENU =====
-echo -e "│  ${GREEN}[1]${RESET} Install FeatherPanel             │"
-echo -e "│  ${YELLOW}[2]${RESET} Update Release                   │"
-echo -e "│  ${BLUE}[3]${RESET} Domain                           │"
-echo -e "│  ${RED}[4]${RESET} Uninstall Panel                  │"
+echo -e "│  ${GREEN}[1]${RESET} Install FeatherPanel            │"
+echo -e "│  ${YELLOW}[2]${RESET} Update Release                  │"
+echo -e "│  ${BLUE}[3]${RESET} Domain                          │"
+echo -e "│  ${RED}[4]${RESET} Uninstall Panel                 │"
 
 echo -e "${CYAN}${BOLD}├──────────────────────────────────────┤${RESET}"
-echo -e "│  ${WHITE}[0]${RESET} Exit                             │"
-echo -e "${CYAN}${BOLD}╰──────────────────────────────────────╯${RESET}"
+echo -e "│  ${WHITE}[0]${RESET} Exit                            │"
+echo -e "${CYAN}${BOLD}╰───────────────────────────────────────╯${RESET}"
 
 echo
 read -rp "Select option: " opt
