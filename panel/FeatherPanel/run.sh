@@ -25,18 +25,18 @@ echo -e "${CYAN}${BOLD}╭──────────────────
 echo -e "${CYAN}${BOLD}│               FEATHERPANEL           │${RESET}"
 echo -e "${CYAN}${BOLD}├──────────────────────────────────────┤${RESET}"
 
-echo -e "${CYAN} │${BOLD} FEATHERPANEL STATUS: $STATUS ${CYAN}  │${BOLD}"
-
-echo -e "${CYAN}${BOLD}├──────────────────────────────────────╮${RESET}"
-
-# ===== MENU =====
-echo -e "${CYAN} │${BOLD}  ${GREEN}[1]${RESET} Install FeatherPanel             ${CYAN} │${BOLD}"
-echo -e "${CYAN} │${BOLD}  ${YELLOW}[2]${RESET} Update Release                   ${CYAN} │${BOLD}"
-echo -e "${CYAN} │${BOLD}  ${RED}[3]${RESET} Domain                           ${CYAN} │${BOLD}"
-echo -e "${CYAN} │${BOLD}  ${RED}[4]${RESET} Uninstall Panel                  ${CYAN} │${BOLD}"
+echo -e "│ FEATHERPANEL STATUS: $STATUS        │"
 
 echo -e "${CYAN}${BOLD}├──────────────────────────────────────┤${RESET}"
-echo -e "${CYAN} │${BOLD}  ${WHITE}[0]${RESET} Exit                             ${CYAN} │${BOLD}"
+
+# ===== MENU =====
+echo -e "│  ${GREEN}[1]${RESET} Install FeatherPanel             │"
+echo -e "│  ${YELLOW}[2]${RESET} Update Release                   │"
+echo -e "│  ${BLUE}[3]${RESET} Domain                           │"
+echo -e "│  ${RED}[4]${RESET} Uninstall Panel                  │"
+
+echo -e "${CYAN}${BOLD}├──────────────────────────────────────┤${RESET}"
+echo -e "│  ${WHITE}[0]${RESET} Exit                             │"
 echo -e "${CYAN}${BOLD}╰──────────────────────────────────────╯${RESET}"
 
 echo
