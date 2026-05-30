@@ -26,7 +26,7 @@ echo -e "${CYAN}│               FEATHERPANEL            │${RESET}"
 echo -e "${CYAN}├───────────────────────────────────────┤${RESET}"
 
 # ===== STATUS LINE (FIXED BORDER COLOR ISSUE) =====
-echo -e "${CYAN}│${RESET} FEATHERPANEL STATUS: $STATUS ${CYAN}│${RESET}"
+echo -e "${CYAN}│${RESET} FEATHERPANEL STATUS: $STATUS  ${CYAN}│${RESET}"
 
 echo -e "${CYAN}├───────────────────────────────────────┤${RESET}"
 
