@@ -21,24 +21,23 @@ else
 fi
 
 # ===== HEADER =====
-echo -e "${CYAN}${BOLD}╭─────────────────────────────────────╮${RESET}"
-echo -e "${CYAN}${BOLD}│              FEATHERPANEL           │${RESET}"
-echo -e "${CYAN}${BOLD}├─────────────────────────────────────┤${RESET}"
+echo -e "${CYAN}${BOLD}╭──────────────────────────────────────╮${RESET}"
+echo -e "${CYAN}${BOLD}│               FEATHERPANEL           │${RESET}"
+echo -e "${CYAN}${BOLD}├──────────────────────────────────────┤${RESET}"
 
-echo -e "│ FEATHERPANEL STATUS: $STATUS        │"
+echo -e "${CYAN} │${BOLD} FEATHERPANEL STATUS: $STATUS ${CYAN}  │${BOLD}"
 
-echo -e "${CYAN}${BOLD}├─────────────────────────────────────╮${RESET}"
+echo -e "${CYAN}${BOLD}├──────────────────────────────────────╮${RESET}"
 
 # ===== MENU =====
-echo -e "│  ${YELLOW}[1]${RESET} Install FeatherPanel            │"
-echo -e "│  ${YELLOW}[2]${RESET} Update Release                  │"
-echo -e "│  ${YELLOW}[3]${RESET} Domain                          │"
-echo -e "│  ${YELLOW}[4]${RESET} Uninstall Panel                 │"
-echo -e "│  ${YELLOW}[5]${RESET} phpMyAdmin                     │"
+echo -e "${CYAN} │${BOLD}  ${GREEN}[1]${RESET} Install FeatherPanel             ${CYAN} │${BOLD}"
+echo -e "${CYAN} │${BOLD}  ${YELLOW}[2]${RESET} Update Release                   ${CYAN} │${BOLD}"
+echo -e "${CYAN} │${BOLD}  ${RED}[3]${RESET} Domain                           ${CYAN} │${BOLD}"
+echo -e "${CYAN} │${BOLD}  ${RED}[4]${RESET} Uninstall Panel                  ${CYAN} │${BOLD}"
 
-echo -e "${CYAN}${BOLD}├─────────────────────────────────────┤${RESET}"
-echo -e "│  ${RED}[0]${RESET} Exit                            │"
-echo -e "${CYAN}${BOLD}╰─────────────────────────────────────╯${RESET}"
+echo -e "${CYAN}${BOLD}├──────────────────────────────────────┤${RESET}"
+echo -e "${CYAN} │${BOLD}  ${WHITE}[0]${RESET} Exit                             ${CYAN} │${BOLD}"
+echo -e "${CYAN}${BOLD}╰──────────────────────────────────────╯${RESET}"
 
 echo
 read -rp "Select option: " opt
