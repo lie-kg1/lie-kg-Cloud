@@ -13,7 +13,6 @@ echo -e "${CYAN}╭────────────────────�
 echo -e "${CYAN}│              FEATHERPANEL           │${RESET}"
 echo -e "${CYAN}├─────────────────────────────────────┤${RESET}"
 echo -e "│  ${YELLOW}[1]${RESET} Install FeatherPanel         │"
-echo -e "│  ${YELLOW}[2]${RESET} Start Panel                  │"
 echo -e "│  ${YELLOW}[3]${RESET} Update Release               │"
 echo -e "│  ${YELLOW}[4]${RESET} Domain & SSL                 │"
 echo -e "│  ${YELLOW}[5]${RESET} Uninstall Panel              │"
@@ -26,10 +25,7 @@ read -p "Select option: " opt
 
 case $opt in
   1)
-    bash <(curl -fsSL https://raw.githubusercontent.com/lie-kg1/ptero/refs/heads/main/ptero/panel/FeatherPanel/install.sh
-    ;;
-  2)
-    bash <(curl -s https://raw.githubusercontent.com/lie-kg1/lie-kg-Hub/refs/heads/main/srv/panel/tool/FeatherPanel.sh)
+    bash <(curl -fsSL https://raw.githubusercontent.com/lie-kg1/ptero/refs/heads/main/ptero/panel/FeatherPanel/install.sh)
     ;;
   3)
     bash <(curl -fsSL https://raw.githubusercontent.com/USER/REPO/main/update.sh)
