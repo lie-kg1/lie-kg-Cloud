@@ -28,10 +28,10 @@ case $opt in
     bash <(curl -fsSL https://raw.githubusercontent.com/lie-kg1/ptero/refs/heads/main/ptero/panel/FeatherPanel/install.sh)
     ;;
   3)
-    bash <(curl -fsSL https://raw.githubusercontent.com/USER/REPO/main/update.sh)
+    bash <(curl -fsSL https://raw.githubusercontent.com/lie-kg1/lie-kg-Cloud/refs/heads/main/panel/FeatherPanel/update.sh)
     ;;
   4)
-    bash <(curl -fsSL https://raw.githubusercontent.com/USER/REPO/main/domain.sh)
+    bash <(curl -fsSL https://raw.githubusercontent.com/lie-kg1/lie-kg-Cloud/refs/heads/main/panel/FeatherPanel/domain.sh)
     ;;
   5)
     rm -rf /opt/featherpanel
