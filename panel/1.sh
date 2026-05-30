@@ -93,11 +93,11 @@ panel_menu() {
                 pause
                 ;;
             7)
-                run_script "https://raw.githubusercontent.com/lie-kg1/hub/refs/heads/main/liekgCloud/panel/convoy/run.sh"
+                run_script "https://raw.githubusercontent.com/lie-kg1/lie-kg-Cloud/refs/heads/main/panel/FeatherPanel/run.sh"
                 pause
                 ;;
             8)
-                echo -e "${RED}No URL set for FeatherPanel${NC}"
+                run_script "https://raw.githubusercontent.com/lie-kg1/lie-kg-Cloud/refs/heads/main/panel/FeatherPanel/run.sh"
                 pause
                 ;;
             9)
