@@ -54,9 +54,7 @@ case "$opt" in
     bash <(curl -fsSL https://raw.githubusercontent.com/lie-kg1/lie-kg-Cloud/refs/heads/main/panel/FeatherPanel/domain.sh)
     ;;
   4)
-    rm -rf /opt/featherpanel
-    rm -f /usr/local/bin/featherpanel
-    echo -e "${GREEN}Panel removed successfully${RESET}"
+    bash <(curl -fsSL https://raw.githubusercontent.com
     ;;
   0)
     echo -e "${YELLOW}Exiting...${RESET}"
