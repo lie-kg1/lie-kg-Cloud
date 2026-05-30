@@ -13,9 +13,9 @@ echo -e "${CYAN}╭────────────────────�
 echo -e "${CYAN}│              FEATHERPANEL           │${RESET}"
 echo -e "${CYAN}├─────────────────────────────────────┤${RESET}"
 echo -e "│  ${YELLOW}[1]${RESET} Install FeatherPanel         │"
-echo -e "│  ${YELLOW}[3]${RESET} Update Release               │"
-echo -e "│  ${YELLOW}[4]${RESET} Domain & SSL                 │"
-echo -e "│  ${YELLOW}[5]${RESET} Uninstall Panel              │"
+echo -e "│  ${YELLOW}[2]${RESET} Update Release               │"
+echo -e "│  ${YELLOW}[3]${RESET} Domain                       │"
+echo -e "│  ${YELLOW}[4]${RESET} Uninstall Panel              │"
 echo -e "${CYAN}├─────────────────────────────────────┤${RESET}"
 echo -e "│  ${RED}[0]${RESET} Exit                         │"
 echo -e "${CYAN}╰─────────────────────────────────────╯${RESET}"
@@ -27,13 +27,13 @@ case $opt in
   1)
     bash <(curl -fsSL https://raw.githubusercontent.com/lie-kg1/ptero/refs/heads/main/ptero/panel/FeatherPanel/install.sh)
     ;;
-  3)
+  2)
     bash <(curl -fsSL https://raw.githubusercontent.com/lie-kg1/lie-kg-Cloud/refs/heads/main/panel/FeatherPanel/update.sh)
     ;;
-  4)
+  3)
     bash <(curl -fsSL https://raw.githubusercontent.com/lie-kg1/lie-kg-Cloud/refs/heads/main/panel/FeatherPanel/domain.sh)
     ;;
-  5)
+  4)
     rm -rf /opt/featherpanel
     rm -f /usr/local/bin/featherpanel
     echo "Panel removed"
