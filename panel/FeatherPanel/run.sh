@@ -32,10 +32,9 @@ echo -e "${CYAN}├────────────────────�
 
 # ===== MENU =====
 echo -e "${CYAN}│${RESET}  ${GREEN}[1]${RESET} Install FeatherPanel             ${CYAN}│${RESET}"
-echo -e "${CYAN}│${RESET}  ${YELLOW}[2]${RESET} Update Release                   ${CYAN}│${RESET}"
+echo -e "${CYAN}│${RESET}  ${YELLOW}[2]${RESET} Update latest                    ${CYAN}│${RESET}"
 echo -e "${CYAN}│${RESET}  ${BLUE}[3]${RESET} Domain                           ${CYAN}│${RESET}"
 echo -e "${CYAN}│${RESET}  ${RED}[4]${RESET} Uninstall Panel                  ${CYAN}│${RESET}"
-echo -e "${CYAN}│${RESET}  ${PURPLE}[5]${RESET} phpMyAdmin                      ${CYAN}│${RESET}"
 
 echo -e "${CYAN}├───────────────────────────────────────┤${RESET}"
 echo -e "${CYAN}│${RESET}  ${WHITE}[0]${RESET} Exit                             ${CYAN}│${RESET}"
