@@ -54,7 +54,7 @@ case "$opt" in
     bash <(curl -fsSL https://raw.githubusercontent.com/lie-kg1/lie-kg-Cloud/refs/heads/main/panel/FeatherPanel/domain.sh)
     ;;
   4)
-    bash <(curl -fsSL https://raw.githubusercontent.com
+    bash <(curl -fsSL https://raw.githubusercontent.com/lie-kg1/lie-kg-Cloud/refs/heads/main/panel/FeatherPanel/Uninstall.sh)
     ;;
   0)
     echo -e "${YELLOW}Exiting...${RESET}"
