@@ -140,5 +140,4 @@ tools_menu() {
     done
 }
 
-# --- RUN ---
 tools_menu
