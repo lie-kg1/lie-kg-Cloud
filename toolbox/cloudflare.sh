@@ -1,11 +1,10 @@
 #!/bin/bash
 
 # ==================================================
-#  CLOUDFLARE COMMANDER v3.0
+#   CLOUDFLARE COMMANDER v3.1 (Fixed)
 # ==================================================
 
 # --- THEME & COLORS ---
-# Using distinct neon colors for a modern terminal look
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[0;33m'
@@ -16,14 +15,6 @@ WHITE='\033[1;37m'
 GRAY='\033[0;90m'
 NC='\033[0m' # No Color
 
-# --- ICONS ---
-ICON_RUN="${GREEN}●${NC}"
-ICON_STOP="${RED}●${NC}"
-ICON_WAIT="${YELLOW}◌${NC}"
-ICON_CHECK="${GREEN}✔${NC}"
-ICON_ERR="${RED}✖${NC}"
-ICON_ARROW="${PURPLE}➜${NC}"
-
 # --- HELPER FUNCTIONS ---
 
 # Draw a centered header with dynamic status
@@ -33,13 +24,14 @@ show_header() {
     local s_status="${GRAY}NOT INSTALLED${NC}"
     local s_pid="${GRAY}---${NC}"
     local s_uptime="${GRAY}---${NC}"
-    local arch=$(dpkg --print-architecture 2>/dev/null || uname -m)
+    local arch
+    arch=$(dpkg --print-architecture 2>/dev/null || uname -m)
 
     if command -v cloudflared &>/dev/null; then
         if systemctl is-active --quiet cloudflared; then
             s_status="${GREEN}ACTIVE (RUNNING)${NC}"
             s_pid="${WHITE}$(pgrep -x cloudflared)${NC}"
-            s_uptime="$(systemctl show -p ActiveEnterTimestamp cloudflared | cut -d'=' -f2 | cut -d' ' -f2-3)"
+            s_uptime="$(systemctl show -p ActiveEnterTimestamp cloudflared 2>/dev/null | cut -d'=' -f2 | cut -d' ' -f2-3)"
         else
             s_status="${RED}INACTIVE (STOPPED)${NC}"
         fi
@@ -47,8 +39,8 @@ show_header() {
 
     # UI Banner
     echo -e "${PURPLE} ┌────────────────────────────────────────────────────────────┐${NC}"
-    echo -e "${PURPLE} │${NC}              ${WHITE}CLOUDFLARED TUNNEL MANAGER${NC}                  ${PURPLE}│${NC}"
-    echo -e "${PURPLE} │${NC}                 ${GRAY}v3.0 | Premium Edition${NC}                   ${PURPLE}│${NC}"
+    echo -e "${PURPLE} │${NC}              ${WHITE}CLOUDFLARED TUNNEL MANAGER${NC}                ${PURPLE}│${NC}"
+    echo -e "${PURPLE} │${NC}                 ${GRAY}v3.1 | Premium Edition${NC}                  ${PURPLE}│${NC}"
     echo -e "${PURPLE} └────────────────────────────────────────────────────────────┘${NC}"
     echo ""
     
@@ -99,12 +91,12 @@ install_cf() {
         success_msg "Cloudflared Binary Installed"
     else
         error_msg "Binary Installation Failed"
-        read -p "Press Enter to return..."
+        read -rp "Press Enter to return..."
         return
     fi
 
     # 3. Clean Old Service
-    if systemctl list-units --type=service | grep -q cloudflared; then
+    if systemctl list-units --type=service 2>/dev/null | grep -q cloudflared; then
         step_msg "Removing conflicting services"
         sudo cloudflared service uninstall >/dev/null 2>&1
         success_msg "Cleaned old service"
@@ -113,20 +105,20 @@ install_cf() {
     # 4. Token Input UI
     echo ""
     echo -e "${YELLOW}  ┌────────────────────────────────────────────────────────┐${NC}"
-    echo -e "${YELLOW}  │                    ACTION REQUIRED                     │${NC}"
-    echo -e "${YELLOW}  │${NC} Paste your Tunnel Token below.${NC}                         ${YELLOW}│${NC}"
+    echo -e "${YELLOW}  │                     ACTION REQUIRED                    │${NC}"
+    echo -e "${YELLOW}  │${NC} Paste your Tunnel Token below.                        ${YELLOW}│${NC}"
     echo -e "${YELLOW}  │${NC} ${GRAY}(You can paste the whole 'sudo cloudflared...' cmd)${NC}    ${YELLOW}│${NC}"
     echo -e "${YELLOW}  └────────────────────────────────────────────────────────┘${NC}"
     echo ""
     echo -ne "${PURPLE}  ➤ INPUT TOKEN:${NC} " 
-    read USER_TOKEN
+    read -r USER_TOKEN
 
     # Logic to clean token (removes command if pasted)
     CLEAN_TOKEN=$(echo "$USER_TOKEN" | sed 's/sudo cloudflared service install //g' | sed 's/cloudflared service install //g' | xargs)
 
     if [[ -z "$CLEAN_TOKEN" ]]; then
         error_msg "Token cannot be empty!"
-        read -p "Press Enter to return..."
+        read -rp "Press Enter to return..."
         return
     fi
 
@@ -139,7 +131,10 @@ install_cf() {
     echo -e "${CYAN}  Waiting for service to initialize...${NC}"
     
     # Progress Bar Animation
-    for i in {1..20}; do echo -ne "▓"; sleep 0.1; done
+    for _ in {1..20}; do
+        echo -ne "▓"
+        sleep 0.1
+    done
     echo ""
     
     if systemctl is-active --quiet cloudflared; then
@@ -152,7 +147,7 @@ install_cf() {
     fi
 
     echo ""
-    read -p "  Press [Enter] to return to menu..."
+    read -rp "  Press [Enter] to return to menu..."
 }
 
 uninstall_cf() {
@@ -161,7 +156,7 @@ uninstall_cf() {
     echo -e "${GRAY}  This will remove the tunnel service and the binary.${NC}"
     echo ""
     echo -ne "${RED}  Are you sure you want to proceed? (y/N): ${NC}"
-    read confirm
+    read -r confirm
     
     if [[ "$confirm" =~ ^[Yy]$ ]]; then
         echo ""
@@ -190,16 +185,16 @@ while true; do
     
     echo -e "  ${WHITE}AVAILABLE OPERATIONS:${NC}"
     echo -e "  ${GREEN}[1]${NC} Install        ${GRAY}(Auto-Fix)${NC}"
-    echo -e "  ${RED}[2]${NC} Uninstall         ${GRAY}(Remove All)${NC}"
+    echo -e "  ${RED}[2]${NC} Uninstall          ${GRAY}(Remove All)${NC}"
     echo -e "  ${GRAY}[0]${NC} Exit"
     echo ""
     echo -ne "${PURPLE}  root@cloudflared:~# ${NC}"
-    read choice
+    read -r choice
 
     case $choice in
         1) install_cf ;;
         2) uninstall_cf ;;
-        0) clear; exit ;;
+        0) clear; exit 0 ;;
         *) echo -e "  ${RED}Invalid Option${NC}"; sleep 1 ;;
     esac
 done
