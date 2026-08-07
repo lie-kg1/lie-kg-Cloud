@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # ==================================================
-#  TAILSCALE MESH COMMANDER v3.0
+#  TAILSCALE MESH COMMANDER v3.0 (Optimized)
 # ==================================================
 
 # --- THEME & COLORS ---
@@ -34,7 +34,10 @@ get_hostname() {
 draw_header() {
     clear
     local host_name=$(get_hostname)
-    local os_info=$(grep PRETTY_NAME /etc/os-release | cut -d= -f2 | tr -d '"')
+    local os_info="Unknown OS"
+    if [ -f /etc/os-release ]; then
+        os_info=$(grep PRETTY_NAME /etc/os-release | cut -d= -f2 | tr -d '"')
+    fi
     
     # Defaults
     local ts_status="${GRAY}NOT INSTALLED${NC}"
@@ -44,7 +47,7 @@ draw_header() {
 
     # Check Installation & Status
     if command -v tailscale &>/dev/null; then
-        if systemctl is-active --quiet tailscaled; then
+        if systemctl is-active --quiet tailscaled 2>/dev/null; then
             ts_status="${GREEN}ACTIVE (MESH ONLINE)${NC}"
             
             # Fetch IP
@@ -57,7 +60,7 @@ draw_header() {
             fi
 
             # Check Exit Node
-            if tailscale status --self | grep -q "exit node"; then
+            if tailscale status --self 2>/dev/null | grep -q "exit node"; then
                 exit_node="${PURPLE}ACTIVE${NC}"
             fi
         else
@@ -66,7 +69,7 @@ draw_header() {
     fi
 
     echo -e "${BLUE}══════════════════════════════════════════════════════════════════════${NC}"
-    echo -e "${BLUE}║${NC}   ${WHITE}TAILSCALE MESH COMMANDER${NC} ${GRAY}::${NC} ${CYAN}SECURE NETWORK OVERLAY SYSTEM${NC}      ${BLUE}║${NC}"
+    echo -e "${BLUE}║${NC}    ${WHITE}TAILSCALE MESH COMMANDER${NC} ${GRAY}::${NC} ${CYAN}SECURE NETWORK OVERLAY SYSTEM${NC}      ${BLUE}║${NC}"
     echo -e "${BLUE}══════════════════════════════════════════════════════════════════════${NC}"
     echo -e "${BLUE}║${NC} ${GRAY}DEVICE:${NC} ${WHITE}$host_name${NC}"
     echo -e "${BLUE}║${NC} ${GRAY}SYSTEM:${NC} $os_info"
@@ -111,7 +114,7 @@ install_tailscale() {
     echo -e "${YELLOW}  └──────────────────────────────────────────────────┘${NC}"
     echo ""
     
-     tailscale up
+    sudo tailscale up
     
     echo ""
     msg_ok "Device successfully joined the Mesh!"
@@ -128,8 +131,8 @@ uninstall_tailscale() {
     
     if [[ "$confirm" =~ ^[Yy]$ ]]; then
         msg_info "Stopping Services..."
-         systemctl stop tailscaled 2>/dev/null
-         systemctl disable tailscaled 2>/dev/null
+        sudo systemctl stop tailscaled 2>/dev/null
+        sudo systemctl disable tailscaled 2>/dev/null
         
         msg_info "Removing Packages (Auto-Detect)..."
         if [ -x "$(command -v apt)" ]; then sudo apt purge tailscale -y -qq >/dev/null 2>&1
@@ -151,8 +154,8 @@ network_map() {
     msg_info "Scanning Mesh Network..."
     echo ""
     if command -v tailscale &>/dev/null; then
-        # Pretty print status
-        tailscale status | awk '{printf "  \033[1;36m%-20s\033[0m %-15s \033[1;32m%-10s\033[0m %s\n", $2, $1, $4, $5}'
+        # Pretty print status safely, avoiding errors if offline
+        tailscale status 2>/dev/null | awk '{printf "  \033[1;36m%-20s\033[0m %-15s \033[1;32m%-10s\033[0m %s\n", $2, $1, $4, $5}'
     else
         msg_err "Tailscale not installed or not running."
     fi
@@ -166,12 +169,12 @@ while true; do
     draw_header
     
     echo -e "  ${WHITE}CORE OPERATIONS:${NC}"
-    echo -e "  ${GREEN}[1]${NC} Install        ${GRAY}(Join Mesh)${NC}"
-    echo -e "  ${RED}[2]${NC} Uninstall     ${GRAY}(Leave Mesh)${NC}"
+    echo -e "  ${GREEN}[1]${NC} Install         ${GRAY}(Join Mesh)${NC}"
+    echo -e "  ${RED}[2]${NC} Uninstall       ${GRAY}(Leave Mesh)${NC}"
     echo -e ""
     echo -e "  ${WHITE}DIAGNOSTICS:${NC}"
-    echo -e "  ${CYAN}[3]${NC} View Network Map        ${GRAY}(List Peers)${NC}"
-    echo -e "  ${YELLOW}[4]${NC} Troubleshooting Logs    ${GRAY}(Debug)${NC}"
+    echo -e "  ${CYAN}[3]${NC} View Network Map         ${GRAY}(List Peers)${NC}"
+    echo -e "  ${YELLOW}[4]${NC} Troubleshooting Logs     ${GRAY}(Debug)${NC}"
     echo -e ""
     echo -e "  ${GRAY}[0] Exit Commander${NC}"
     echo ""
