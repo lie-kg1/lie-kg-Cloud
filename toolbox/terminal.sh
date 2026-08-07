@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # ==================================================
-#  TERMINAL SHARING HUB v4.1 | FIXED UNINSTALLER
+#  TERMINAL SHARING HUB v4.1 | FIXED UNINSTALLER (Optimized)
 # ==================================================
 
 # --- COLORS & STYLES ---
@@ -33,11 +33,12 @@ msg_err()  { echo -e "  ${RED}✖${NC} $1"; }
 # --- HEADER UI ---
 draw_header() {
     clear
-    local host=$(hostname)
-    local ip=$(hostname -I | awk '{print $1}')
+    local host=$(hostname 2>/dev/null || echo "localhost")
+    local ip=$(hostname -I 2>/dev/null | awk '{print $1}')
+    [ -z "$ip" ] && ip="127.0.0.1"
     
     echo -e "${CYAN}══════════════════════════════════════════════════════════════════════${NC}"
-    echo -e "${CYAN}║${NC}       ${WHITE}TERMINAL SHARING HUB${NC} ${GRAY}::${NC} ${PURPLE}REMOTE COLLABORATION SUITE${NC}           ${CYAN}║${NC}"
+    echo -e "${CYAN}║${NC}        ${WHITE}TERMINAL SHARING HUB${NC} ${GRAY}::${NC} ${PURPLE}REMOTE COLLABORATION SUITE${NC}            ${CYAN}║${NC}"
     echo -e "${CYAN}══════════════════════════════════════════════════════════════════════${NC}"
     echo -e "${CYAN}║${NC} ${GRAY}SYSTEM:${NC} ${WHITE}$host${NC}  ${GRAY}IP:${NC} ${WHITE}$ip${NC}   ${GRAY}VER:${NC} ${WHITE}4.1 (Stable)${NC}"
     echo -e "${CYAN}╚══════════════════════════════════════════════════════════════════════${NC}"
@@ -59,31 +60,30 @@ manage_tool() {
             
             case $TOOL in
                 sshx)  
-                    # Remove binary and local config folder
                     rm -rf "$HOME/.sshx"
-                    sudo rm -f $(which sshx) 2>/dev/null
+                    local sshx_path=$(which sshx 2>/dev/null)
+                    [ -n "$sshx_path" ] && sudo rm -f "$sshx_path"
                     ;;
-                tmate) 
-                    # Smart Package Manager Detection
-                    if command -v apt &>/dev/null; then sudo apt remove -y tmate -qq
-                    elif command -v dnf &>/dev/null; then sudo dnf remove -y tmate
-                    elif command -v yum &>/dev/null; then sudo yum remove -y tmate
-                    elif command -v pacman &>/dev/null; then sudo pacman -Rns --noconfirm tmate
+                tmate)  
+                    if command -v apt &>/dev/null; then sudo apt remove -y tmate -qq 2>/dev/null
+                    elif command -v dnf &>/dev/null; then sudo dnf remove -y tmate 2>/dev/null
+                    elif command -v yum &>/dev/null; then sudo yum remove -y tmate 2>/dev/null
+                    elif command -v pacman &>/dev/null; then sudo pacman -Rns --noconfirm tmate 2>/dev/null
                     fi 
                     ;;
-                upterm) 
-                     rm -f /usr/local/bin/upterm 
-                     rm -f /usr/bin/upterm
-                    ;;
-                ttyd)   
-                     rm -f /usr/local/bin/ttyd 
-                    ;;
+                upterm)  
+                     sudo rm -f /usr/local/bin/upterm 
+                     sudo rm -f /usr/bin/upterm
+                     ;;
+                ttyd)    
+                     sudo rm -f /usr/local/bin/ttyd 
+                     ;;
                 gotty)  
-                     rm -f /usr/local/bin/gotty 
-                    ;;
-                cloudflared) 
-                     rm -f /usr/local/bin/cloudflared 
-                    ;;
+                     sudo rm -f /usr/local/bin/gotty 
+                     ;;
+                cloudflared)  
+                     sudo rm -f /usr/local/bin/cloudflared 
+                     ;;
             esac
             
             # Verify Removal
@@ -104,22 +104,22 @@ manage_tool() {
             
             case $TOOL in
                 sshx) curl -sSf https://sshx.io/get | sh -s run ;;
-                tmate) 
+                tmate)  
                     if command -v apt &>/dev/null; then sudo apt update -qq && sudo apt install -y tmate -qq
                     elif command -v yum &>/dev/null; then sudo yum install -y tmate
                     elif command -v pacman &>/dev/null; then sudo pacman -S --noconfirm tmate
                     fi 
                     ;;
                 upterm) curl -fsSL https://upterm.sh/install | sh ;;
-                ttyd) 
-                    curl -L https://github.com/tsl0922/ttyd/releases/latest/download/ttyd.x86_64 -o ttyd
+                ttyd)  
+                    curl -sL https://github.com/tsl0922/ttyd/releases/latest/download/ttyd.x86_64 -o ttyd
                     chmod +x ttyd && sudo mv ttyd /usr/local/bin/
                     ;;
                 gotty)
                     wget -q https://github.com/yudai/gotty/releases/latest/download/gotty_linux_amd64.tar.gz
                     tar -xzf gotty_linux_amd64.tar.gz
                     chmod +x gotty && sudo mv gotty /usr/local/bin/
-                    rm gotty_linux_amd64.tar.gz
+                    rm -f gotty_linux_amd64.tar.gz
                     ;;
                 cloudflared)
                     wget -q https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64
@@ -172,16 +172,18 @@ package_manager_menu() {
 sshx_run() { [ ! -x "$(command -v sshx)" ] && manage_tool "sshx"; sshx; }
 tmate_run() { [ ! -x "$(command -v tmate)" ] && manage_tool "tmate"; tmate; }
 upterm_run() { [ ! -x "$(command -v upterm)" ] && manage_tool "upterm"; upterm host; }
-ttyd_run() { 
+ttyd_run() {  
     [ ! -x "$(command -v ttyd)" ] && manage_tool "ttyd"
     echo -ne "${PURPLE}  ➤ Select Port (Default 8080): ${NC}"
     read P
     P=${P:-8080}
-    echo -e "${GREEN}  ▶ Web Terminal Active: http://$(hostname -I | awk '{print $1}'):$P${NC}"
+    local local_ip=$(hostname -I 2>/dev/null | awk '{print $1}')
+    [ -z "$local_ip" ] && local_ip="127.0.0.1"
+    echo -e "${GREEN}  ▶ Web Terminal Active: http://$local_ip:$P${NC}"
     ttyd -p "$P" bash
 }
 gotty_run() { [ ! -x "$(command -v gotty)" ] && manage_tool "gotty"; gotty -w bash; }
-cloudflared_run() { 
+cloudflared_run() {  
     [ ! -x "$(command -v cloudflared)" ] && manage_tool "cloudflared"
     echo -e "${GREEN}  ▶ Starting Quick Tunnel...${NC}"
     cloudflared tunnel --url ssh://localhost:22
@@ -189,20 +191,20 @@ cloudflared_run() {
 serveo_run() {
     echo -ne "${PURPLE}  ➤ Custom Subdomain (Enter for random): ${NC}"
     read SUB
-    if [ -z "$SUB" ]; then ssh -R 80:localhost:22 serveo.net
-    else ssh -R "$SUB":80:localhost:22 serveo.net; fi
+    if [ -z "$SUB" ]; then ssh -o StrictHostKeyChecking=no -R 80:localhost:22 serveo.net
+    else ssh -o StrictHostKeyChecking=no -R "$SUB":80:localhost:22 serveo.net; fi
 }
-localhost_run() { ssh -R 80:localhost:22 nokey@localhost.run; }
+localhost_run() { ssh -o StrictHostKeyChecking=no -R 80:localhost:22 nokey@localhost.run; }
 
 # --- PRE-REQ CHECK ---
 base_install() {
     if ! has curl || ! has wget; then
         echo -e "${YELLOW}  [SYSTEM] Installing base dependencies...${NC}"
         if command -v apt &>/dev/null; then
-            sudo apt update -y -qq >/dev/null
-            sudo apt install -y curl wget sudo screen tmux -qq >/dev/null
+            sudo apt update -y -qq >/dev/null 2>&1
+            sudo apt install -y curl wget sudo screen tmux -qq >/dev/null 2>&1
         elif command -v yum &>/dev/null; then
-            sudo yum install -y curl wget sudo screen tmux -q
+            sudo yum install -y curl wget sudo screen tmux -q >/dev/null 2>&1
         fi
     fi
 }
