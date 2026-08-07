@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # ==================================================
-#  SSH COMMANDER v3.1 | ACCESS CONTROL SYSTEM
+#  SSH COMMANDER v3.1 | ACCESS CONTROL SYSTEM (OPTIMIZED)
 # ==================================================
 
 # --- THEME & COLORS ---
@@ -49,25 +49,28 @@ get_ssh_port() {
 draw_header() {
     clear
     local hostname=$(hostname)
-    local ip=$(hostname -I | awk '{print $1}')
-    local active_sessions=$(who | grep pts | wc -l)
+    local ip=$(hostname -I 2>/dev/null | awk '{print $1}')
+    [ -z "$ip" ] && ip="127.0.0.1"
+    local active_sessions=$(who 2>/dev/null | grep pts | wc -l)
     
     local srv_stat="${RED}STOPPED${NC}"
-    if systemctl is-active --quiet ssh; then srv_stat="${GREEN}ONLINE${NC}"; fi
+    if systemctl is-active --quiet ssh 2>/dev/null || systemctl is-active --quiet sshd 2>/dev/null; then 
+        srv_stat="${GREEN}ONLINE${NC}" 
+    fi
     
     local root_login=$(get_conf_status "PermitRootLogin" "prohibit-password")
     local pass_auth=$(get_conf_status "PasswordAuthentication" "no")
     local current_port=$(get_ssh_port)
 
     echo -e "${PURPLE}══════════════════════════════════════════════════════════════════════${NC}"
-    echo -e "${PURPLE}║${NC}      ${WHITE}SSH COMMANDER${NC} ${GRAY}::${NC} ${CYAN}SERVER ACCESS CONTROL SYSTEM${NC}                 ${PURPLE}║${NC}"
+    echo -e "${PURPLE}║${NC}      ${WHITE}SSH COMMANDER${NC} ${GRAY}::${NC} ${CYAN}SERVER ACCESS CONTROL SYSTEM${NC}                     ${PURPLE}║${NC}"
     echo -e "${PURPLE}══════════════════════════════════════════════════════════════════════${NC}"
     echo -e "${PURPLE}║${NC} ${GRAY}SYSTEM:${NC} ${WHITE}$hostname${NC}  ${GRAY}IP:${NC} ${WHITE}$ip${NC}"
     echo -e "${PURPLE}║${NC} ${GRAY}STATUS:${NC} $srv_stat   ${GRAY}PORT:${NC} ${WHITE}$current_port${NC}   ${GRAY}SESSIONS:${NC} ${YELLOW}$active_sessions${NC}"
     echo -e "${PURPLE}──────────────────────────────────────────────────────────────────────${NC}"
     echo -e "${PURPLE}║${NC} ${CYAN}SECURITY CONFIGURATION:${NC}"
-    echo -e "${PURPLE}║${NC}   ${GRAY}●${NC} Root Login      : $root_login"
-    echo -e "${PURPLE}║${NC}   ${GRAY}●${NC} Password Auth   : $pass_auth"
+    echo -e "${PURPLE}║${NC}    ${GRAY}●${NC} Root Login     : $root_login"
+    echo -e "${PURPLE}║${NC}    ${GRAY}●${NC} Password Auth  : $pass_auth"
     echo -e "${PURPLE}╚══════════════════════════════════════════════════════════════════════${NC}"
     echo ""
 }
@@ -80,15 +83,15 @@ enable_access() {
     
     cp "$CONFIG_FILE" "$BACKUP_FILE"
     
-    sed -i '/^PermitRootLogin/d' "$CONFIG_FILE"
-    sed -i '/^PasswordAuthentication/d' "$CONFIG_FILE"
+    sed -i '/^[[:space:]]*#*[[:space:]]*PermitRootLogin/d' "$CONFIG_FILE"
+    sed -i '/^[[:space:]]*#*[[:space:]]*PasswordAuthentication/d' "$CONFIG_FILE"
     echo "PermitRootLogin yes" >> "$CONFIG_FILE"
     echo "PasswordAuthentication yes" >> "$CONFIG_FILE"
     
     msg_ok "Config Updated (Root: YES, Pass: YES)"
     
     msg_info "Reloading SSH Daemon..."
-    systemctl restart ssh
+    systemctl restart ssh 2>/dev/null || systemctl restart sshd
     
     msg_ok "Service Restarted."
     echo ""
@@ -105,12 +108,13 @@ secure_lockdown() {
     read confirm
     
     if [[ "$confirm" =~ ^[Yy]$ ]]; then
-        sed -i '/^PermitRootLogin/d' "$CONFIG_FILE"
-        sed -i '/^PasswordAuthentication/d' "$CONFIG_FILE"
+        cp "$CONFIG_FILE" "$BACKUP_FILE"
+        sed -i '/^[[:space:]]*#*[[:space:]]*PermitRootLogin/d' "$CONFIG_FILE"
+        sed -i '/^[[:space:]]*#*[[:space:]]*PasswordAuthentication/d' "$CONFIG_FILE"
         echo "PermitRootLogin no" >> "$CONFIG_FILE"
         echo "PasswordAuthentication no" >> "$CONFIG_FILE"
         
-        systemctl restart ssh
+        systemctl restart ssh 2>/dev/null || systemctl restart sshd
         msg_ok "Server Secured (Key-Only Access)."
     else
         msg_info "Operation Cancelled."
@@ -118,7 +122,6 @@ secure_lockdown() {
     read -p "  Press Enter to continue..."
 }
 
-# 🔥 UPDATED PASSWORD FUNCTION
 set_root_pass() {
     echo -e "${GRAY}  ──────────────────────────────────────────${NC}"
     msg_info "ROOT PASSWORD MANAGEMENT"
@@ -178,7 +181,7 @@ restore_backup() {
     if [ -f "$BACKUP_FILE" ]; then
         msg_info "Restoring backup..."
         cp "$BACKUP_FILE" "$CONFIG_FILE"
-        systemctl restart ssh
+        systemctl restart ssh 2>/dev/null || systemctl restart sshd
         msg_ok "Configuration restored."
     else
         msg_err "No backup file found."
