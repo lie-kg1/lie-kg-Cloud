@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # ==================================================
-#  OMNI-ADMIN v201 | TITAN EDITION (AUTO-FIXED)
+#  OMNI-ADMIN v201 | TITAN EDITION (OPTIMIZED)
 # ==================================================
 
 # --- THEME & COLORS ---
@@ -25,6 +25,7 @@ auto_install() {
         elif [ -f /etc/arch-release ]; then
             sudo pacman -S --noconfirm "$PKG" >/dev/null 2>&1
         fi
+        echo -e "${G} Done.${N}"
     fi
 }
 
@@ -42,7 +43,7 @@ draw_header() {
     echo -e "${C} ╔═════════════════════════════════════════════════════════════╗${N}"
     echo -e "${C} ║${W}  OMNI-ADMIN v201 ${GR}|${Y} TITAN EDITION ${GR}|${M} $(whoami)@$(hostname) ${C}║${N}"
     echo -e "${C} ╠═════════════════════════════════════════════════════════════╣${N}"
-    echo -e "${C} ║${GR}  CPU: ${G}${CPU}%${GR}  │  RAM: ${G}${RAM}%${GR}  │  KERNEL: ${B}$(uname -r)${C}  ║${N}"
+    echo -e "${C} ║${GR}  CPU: ${G}${CPU}%${GR}  │  RAM: ${G}${RAM}%${GR}  │  KERNEL: ${B}$(uname -r)${C}   ║${N}"
     echo -e "${C} ╚═════════════════════════════════════════════════════════════╝${N}"
     echo ""
 }
@@ -54,7 +55,6 @@ menu_sys() {
     while true; do
         draw_header
         echo -e "${M} [ CATEGORY 1: SYSTEM & HARDWARE ]${N}"
-        printf "${GR} 0.${W} %-25s ${GR}11.${W} %-25s\n" "All Info" "All Devices"
         printf "${GR} 1.${W} %-25s ${GR}11.${W} %-25s\n" "OS Release Info" "PCI Devices"
         printf "${GR} 2.${W} %-25s ${GR}12.${W} %-25s\n" "Kernel Version" "USB Devices"
         printf "${GR} 3.${W} %-25s ${GR}13.${W} %-25s\n" "CPU Architecture" "Block Devices (lsblk)"
@@ -65,11 +65,11 @@ menu_sys() {
         printf "${GR} 8.${W} %-25s ${GR}18.${W} %-25s\n" "Hostname Info" "BIOS/Firmware Info"
         printf "${GR} 9.${W} %-25s ${GR}19.${W} %-25s\n" "System Date/Time" "Sensor Temps"
         printf "${GR}10.${W} %-25s ${GR}20.${W} %-25s\n" "Last Reboot Log" "Battery Status"
-        echo -e "${R} 0. Back to Main Menu${N}"
+        echo -e "${R}  99. Run YABS Benchmark${N}"
+        echo -e "${R}   0. Back to Main Menu${N}"
         read -p " Select Tool > " opt
         
         case $opt in
-            0) curl -sL yabs.sh | bash ;;
             1) cat /etc/*release ;;
             2) uname -a ;;
             3) lscpu | grep Architecture ;;
@@ -80,9 +80,9 @@ menu_sys() {
             8) hostnamectl ;;
             9) date ;;
             10) last reboot | head -5 ;;
-            11) command -v lspci >/dev/null || apt install pciutils -y >/dev/null 2>&1; lspci; pause ;;
-            12) command -v lspci >/dev/null || apt install pciutils -y >/dev/null 2>&1; lspci; pause ;;
-            13) command -v lsblk >/dev/null || apt install util-linux -y >/dev/null 2>&1; lsblk; pause ;;
+            11) auto_install pciutils; lspci ;;
+            12) auto_install usbutils; lsusb ;;
+            13) auto_install util-linux; lsblk ;;
             14) df -hT --exclude-type=tmpfs ;;
             15) df -i ;;
             16) mount | column -t ;;
@@ -90,7 +90,8 @@ menu_sys() {
             18) [ -d /sys/firmware/efi ] && echo "UEFI Boot" || echo "Legacy BIOS" ;;
             19) auto_install lm-sensors; sensors ;;
             20) acpi -bi 2>/dev/null || echo "No battery detected" ;;
-            0) return ;; # Breaks loop, returns to main menu
+            99) curl -sL yabs.sh | bash ;;
+            0) return ;;
             *) echo "Invalid option"; sleep 1; continue ;;
         esac
         pause
@@ -114,7 +115,7 @@ menu_net() {
         printf "${GR}28.${W} %-25s ${GR}38.${W} %-25s\n" "ARP Table" "Scan Local Network"
         printf "${GR}29.${W} %-25s ${GR}39.${W} %-25s\n" "Interface Stats" "Bandwidth (nload)"
         printf "${GR}30.${W} %-25s ${GR}40.${W} %-25s\n" "Flush DNS Cache" "Wifi Signal (Linux)"
-        echo -e "${R} 0. Back to Main Menu${N}"
+        echo -e "${R}  0. Back to Main Menu${N}"
         read -p " Select Tool > " opt
         
         case $opt in
@@ -122,20 +123,20 @@ menu_net() {
             22) curl -s ifconfig.me ;;
             23) read -p "Domain: " d; auto_install dnsutils; dig "$d" +short ;;
             24) read -p "Domain: " d; auto_install whois; whois "$d" | head -20 ;;
-            25) netstat -tulpn ;;
+            25) auto_install net-tools; netstat -tulpn ;;
             26) ss -tuna ;;
             27) ip route ;;
             28) ip neigh ;;
             29) ip -s link ;;
-            30) sudo systemd-resolve --flush-caches && echo "Flushed." ;;
+            30) sudo systemd-resolve --flush-caches 2>/dev/null || sudo resolvectl flush-caches && echo "Flushed." ;;
             31) ping -c 4 google.com ;;
             32) read -p "Host: " h; ping -c 4 "$h" ;;
-            33) read -p "Host: " h; traceroute "$h" ;;
+            33) read -p "Host: " h; auto_install traceroute; traceroute "$h" ;;
             34) read -p "Host: " h; auto_install mtr; mtr "$h" ;;
             35) auto_install speedtest-cli; speedtest-cli --simple ;;
             36) read -p "URL: " u; wget "$u" ;;
             37) read -p "URL: " u; curl -I "$u" ;;
-            38) auto_install nmap; nmap -sn 192.168.1.0/24 ;;
+            38) auto_install nmap; read -p "Subnet (e.g. 192.168.1.0/24): " sub; nmap -sn "$sub" ;;
             39) auto_install nload; nload ;;
             40) nmcli dev wifi ;;
             0) return ;;
@@ -162,14 +163,14 @@ menu_sec() {
         printf "${GR}48.${W} %-25s ${GR}58.${W} %-25s\n" "Unlock User" "SELinux Status"
         printf "${GR}49.${W} %-25s ${GR}59.${W} %-25s\n" "Kick User" "AppArmor Status"
         printf "${GR}50.${W} %-25s ${GR}60.${W} %-25s\n" "Kill User Procs" "History Cleaner"
-        echo -e "${R} 0. Back to Main Menu${N}"
+        echo -e "${R}  0. Back to Main Menu${N}"
         read -p " Select Tool > " opt
         
         case $opt in
             41) sudo ufw status 2>/dev/null || echo "UFW not found" ;;
             42) sudo fail2ban-client status 2>/dev/null || echo "Fail2ban not found" ;;
             43) last -n 10 ;;
-            44) sudo grep "Failed" /var/log/auth.log | tail -10 ;;
+            44) sudo grep "Failed" /var/log/auth.log 2>/dev/null | tail -10 || echo "Auth log not accessible" ;;
             45) w ;;
             46) read -p "User: " u; sudo chage -l "$u" ;;
             47) read -p "User: " u; sudo passwd -l "$u" ;;
@@ -210,19 +211,19 @@ menu_maint() {
         printf "${GR}68.${W} %-25s ${GR}78.${W} %-25s\n" "Backup Home" "Start Service"
         printf "${GR}69.${W} %-25s ${GR}79.${W} %-25s\n" "Find Large Files" "Enable Service"
         printf "${GR}70.${W} %-25s ${GR}80.${W} %-25s\n" "Memory Cache Drop" "Disable Service"
-        echo -e "${R} 0. Back to Main Menu${N}"
+        echo -e "${R}  0. Back to Main Menu${N}"
         read -p " Select Tool > " opt
         
         case $opt in
-            61) sudo apt update || sudo yum check-update ;;
-            62) sudo apt upgrade -y || sudo yum update -y ;;
-            63) sudo apt autoremove -y || sudo yum autoremove ;;
+            61) sudo apt update 2>/dev/null || sudo yum check-update ;;
+            62) sudo apt upgrade -y 2>/dev/null || sudo yum update -y ;;
+            63) sudo apt autoremove -y 2>/dev/null || sudo yum autoremove ;;
             64) rm -rf ~/.local/share/Trash/* ;;
             65) rm -rf ~/.cache/thumbnails/* ;;
             66) sudo systemctl restart networking ;;
             67) sudo timedatectl set-ntp on ;;
             68) tar -czf "$BACKUP_DIR/home_bkp.tar.gz" /home/ ;;
-            69) sudo find / -type f -size +100M ;;
+            69) sudo find / -type f -size +100M 2>/dev/null ;;
             70) sudo sh -c 'echo 3 > /proc/sys/vm/drop_caches' ;;
             71) crontab -e ;;
             72) crontab -l ;;
@@ -258,7 +259,7 @@ menu_web() {
         printf "${GR}88.${W} %-25s ${GR}98.${W} %-25s\n" "Container Logs" "Access Logs"
         printf "${GR}89.${W} %-25s ${GR}99.${W} %-25s\n" "Docker Stats" "Error Logs"
         printf "${GR}90.${W} %-25s ${GR}100.${W} %-25s\n" "Docker Compose Up" "Certbot Renew"
-        echo -e "${R} 0. Back to Main Menu${N}"
+        echo -e "${R}  0. Back to Main Menu${N}"
         read -p " Select Tool > " opt
         
         case $opt in
@@ -267,8 +268,8 @@ menu_web() {
             83) docker ps ;;
             84) docker images ;;
             85) docker system prune -f ;;
-            86) docker stop $(docker ps -a -q) ;;
-            87) docker kill $(docker ps -a -q) ;;
+            86) docker stop $(docker ps -a -q) 2>/dev/null || echo "No containers running" ;;
+            87) docker kill $(docker ps -a -q) 2>/dev/null || echo "No containers running" ;;
             88) read -p "ID: " i; docker logs "$i" ;;
             89) docker stats --no-stream ;;
             90) docker-compose up -d ;;
@@ -296,15 +297,15 @@ while true; do
     draw_header
     echo -e "${W} SELECT A MODULE (20 Tools Per Module):${N}"
     echo ""
-    echo -e "  ${M}[1]${W} System & Hardware   ${GR}(Tools 1-20)${N}   ${GR}:: CPU, RAM, Disk, Info${N}"
-    echo -e "  ${B}[2]${W} Network & Internet  ${GR}(Tools 21-40)${N}  ${GR}:: IP, DNS, Speed, Scan${N}"
-    echo -e "  ${R}[3]${W} Security & Audit    ${GR}(Tools 41-60)${N}  ${GR}:: Firewall, Users, Perms${N}"
-    echo -e "  ${Y}[4]${W} Maintenance & Ops   ${GR}(Tools 61-80)${N}  ${GR}:: Updates, Clean, Services${N}"
-    echo -e "  ${C}[5]${W} Docker & Web Stack  ${GR}(Tools 81-100)${N} ${GR}:: Containers, Nginx, Logs${N}"
+    echo -e "   ${M}[1]${W} System & Hardware   ${GR}(Tools 1-20)${N}   ${GR}:: CPU, RAM, Disk, Info${N}"
+    echo -e "   ${B}[2]${W} Network & Internet  ${GR}(Tools 21-40)${N}  ${GR}:: IP, DNS, Speed, Scan${N}"
+    echo -e "   ${R}[3]${W} Security & Audit    ${GR}(Tools 41-60)${N}  ${GR}:: Firewall, Users, Perms${N}"
+    echo -e "   ${Y}[4]${W} Maintenance & Ops   ${GR}(Tools 61-80)${N}  ${GR}:: Updates, Clean, Services${N}"
+    echo -e "   ${C}[5]${W} Docker & Web Stack  ${GR}(Tools 81-100)${N} ${GR}:: Containers, Nginx, Logs${N}"
     echo ""
-    echo -e "  ${R}[0]${W} EXIT TITAN PANEL${N}"
+    echo -e "   ${R}[0]${W} EXIT TITAN PANEL${N}"
     echo ""
-    echo -ne "${C}  root@info:~# ${N}"
+    echo -ne "${C}   root@info:~# ${N}"
     read main_opt
 
     case $main_opt in
