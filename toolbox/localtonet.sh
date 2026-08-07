@@ -66,7 +66,7 @@ case $choice in
     ;;
 
 4)
-    echo -e "${CYAN}Bye bro 👋${NC}"
+    echo -e "${CYAN}Bye 👋${NC}"
     exit 0
     ;;
 
