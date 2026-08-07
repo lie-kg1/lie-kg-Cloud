@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # ==================================================
-#  SERVER UTILITY MENU | v3.0 (Dashboard UI)
+#  SERVER UTILITY MENU | v3.0 (Dashboard UI - Optimized)
 # ==================================================
 
 # --- COLORS ---
@@ -25,15 +25,19 @@ pause() {
 # --- HEADER UI ---
 draw_header() {
     echo -e "${CYAN}╔════════════════════════════════════════════════════════════╗${NC}"
-    echo -e "${CYAN}║${NC}   ${PURPLE}⚡ SERVER CONTROL PANEL ⚡${NC}                           ${CYAN}║${NC}"
+    echo -e "${CYAN}║${NC}    ${PURPLE}⚡ SERVER CONTROL PANEL ⚡${NC}                            ${CYAN}║${NC}"
     echo -e "${CYAN}╠════════════════════════════════════════════════════════════╣${NC}"
 
     USER=$(whoami)
     HOST=$(hostname)
 
-    RAM=$(free -h | awk '/Mem:/ {print $3 "/" $2}')
-    CPU=$(uptime | awk -F'load average:' '{ print $2 }')
-    IP=$(curl -s ifconfig.me 2>/dev/null)
+    RAM=$(free -h 2>/dev/null | awk '/Mem:/ {print $3 "/" $2}')
+    [ -z "$RAM" ] && RAM="N/A"
+    
+    CPU=$(uptime | awk -F'load average:' '{ print $2 }' 2>/dev/null)
+    [ -z "$CPU" ] && CPU="N/A"
+    
+    IP=$(curl -s --max-time 2 ifconfig.me 2>/dev/null)
 
     printf "${CYAN}║${NC} ${GREEN}User:${NC} %-10s ${GREEN}Host:${NC} %-20s ${CYAN}║${NC}\n" "$USER" "$HOST"
     printf "${CYAN}║${NC} ${YELLOW}RAM:${NC} %-15s ${YELLOW}CPU:${NC} %-20s ${CYAN}║${NC}\n" "$RAM" "$CPU"
@@ -131,7 +135,7 @@ tools_menu() {
             0)
                 clear
                 echo -e "${GREEN}Goodbye 👋${NC}"
-                exit ;;
+                exit 0 ;;
 
             *)
                 echo -e "${RED}Invalid Option${NC}"
