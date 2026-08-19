@@ -13,7 +13,7 @@ NC='\033[0m'
 msg_info() { echo -e "  ${BLUE}➜${NC} $1"; }
 msg_ok()   { echo -e "  ${GREEN}✔${NC} $1"; }
 msg_err()  { echo -e "  ${RED}✖${NC} $1"; }
-msg_input() { echo -ne "  ${PURPLE}➤${NC} $1: \"; }
+msg_input() { echo -ne "  ${PURPLE}➤${NC} $1: "; }
 
 spinner() {
     local pid=$1

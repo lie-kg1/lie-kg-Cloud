@@ -20,7 +20,6 @@ echo -e "${BOLD}Select Configuration Mode:${NC}"
 echo -e "  ${GREEN}[1]${NC} SSL / HTTPS ${YELLOW}(Secure)${NC}"
 echo -e "  ${RED}[2]${NC} No SSL / HTTP ${YELLOW}(Insecure)${NC}"
 echo -e "  ${RED}[3]${NC} CREATE / HTTP/HTTPS ${YELLOW}(Insecure)${NC}"
-\
 echo ""
 read -p "Select option [1-3]: " OPTION
 
@@ -146,6 +145,44 @@ server {
 }
 EOF
 
+# ================= AUTO SSL GENERATOR =================
+elif [ "$OPTION" == "3" ]; then
+    echo -e "${CYAN}${BOLD}=========================================${NC}"
+    echo -e "${CYAN}      AUTO SSL GENERATOR (Certbot)       ${NC}"
+    echo -e "${CYAN}=========================================${NC}"
+    echo ""
+    EMAIL="ssl$(tr -dc a-z0-9 </dev/urandom | head -c6)@nobita.com"
+    # --- 1. Get Inputs ---
+    read -p "Enter your Domain (e.g., panel.example.com): " DOMAIN
+    # --- 2. Install Dependencies ---
+    echo ""
+    echo -e "${YELLOW}[*] Updating system repositories...${NC}"
+    apt update -y
+
+    echo -e "${YELLOW}[*] Installing Certbot and Nginx plugin...${NC}"
+    apt install certbot python3-certbot-nginx -y
+    # --- 4. Run Certbot ---
+    echo ""
+    echo -e "${GREEN}[*] Requesting SSL Certificate...${NC}"
+
+    # The magic command
+    certbot --nginx -d ${DOMAIN} --non-interactive --agree-tos -m ${EMAIL} --redirect
+
+    # --- 5. Verify Success ---
+    if [ $? -eq 0 ]; then
+        echo ""
+        echo -e "${CYAN}=========================================${NC}"
+        echo -e "${GREEN}✔ SSL Installed Successfully!${NC}"
+        echo -e "${GREEN}✔ HTTPS Redirection Enabled.${NC}"
+        echo -e "Your Panel is live at: ${BOLD}https://${DOMAIN}${NC}"
+        echo -e "${CYAN}=========================================${NC}"
+    else
+        echo ""
+        echo -e "${RED}[!] SSL Generation Failed.${NC}"
+        echo -e "${YELLOW}Please check if your domain points to this IP address.${NC}"
+    fi
+    exit 0
+
 else
     echo -e "${RED}[!] Invalid Option selected. Exiting.${NC}"
     exit 1
@@ -166,43 +203,4 @@ if [ $? -eq 0 ]; then
 else
     echo ""
     echo -e "${RED}[!] Nginx configuration failed. Please check errors above.${NC}"
-fi
-
-# ================= NO SSL CONFIGURATION =================
-elif [ "$OPTION" == "3" ]; then
-# --- Header ---
-clear
-echo -e "${CYAN}${BOLD}=========================================${NC}"
-echo -e "${CYAN}      AUTO SSL GENERATOR (Certbot)       ${NC}"
-echo -e "${CYAN}=========================================${NC}"
-echo ""
-EMAIL="ssl$(tr -dc a-z0-9 </dev/urandom | head -c6)@nobita.com"
-# --- 1. Get Inputs ---
-read -p "Enter your Domain (e.g., panel.example.com): " DOMAIN
-# --- 2. Install Dependencies ---
-echo ""
-echo -e "${YELLOW}[*] Updating system repositories...${NC}"
-apt update -y
-
-echo -e "${YELLOW}[*] Installing Certbot and Nginx plugin...${NC}"
-apt install certbot python3-certbot-nginx -y
-# --- 4. Run Certbot ---
-echo ""
-echo -e "${GREEN}[*] Requesting SSL Certificate...${NC}"
-
-# The magic command
-certbot --nginx -d ${DOMAIN} --non-interactive --agree-tos -m ${EMAIL} --redirect
-
-# --- 5. Verify Success ---
-if [ $? -eq 0 ]; then
-    echo ""
-    echo -e "${CYAN}=========================================${NC}"
-    echo -e "${GREEN}✔ SSL Installed Successfully!${NC}"
-    echo -e "${GREEN}✔ HTTPS Redirection Enabled.${NC}"
-    echo -e "Your Panel is live at: ${BOLD}https://${DOMAIN}${NC}"
-    echo -e "${CYAN}=========================================${NC}"
-else
-    echo ""
-    echo -e "${RED}[!] SSL Generation Failed.${NC}"
-    echo -e "${YELLOW}Please check if your domain points to this IP address.${NC}"
 fi
